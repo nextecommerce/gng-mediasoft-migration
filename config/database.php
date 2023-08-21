@@ -51,7 +51,7 @@ return [
             'database' => env('GNG_DATABASE', 'forge'),
             'username' => env('GNG_USERNAME', 'forge'),
             'password' => env('GNG_PASSWORD', ''),
-            'unix_socket' => env('GNG_SOCKET', ''),
+            'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',

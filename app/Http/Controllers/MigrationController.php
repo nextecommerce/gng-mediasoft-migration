@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Service\MigrationService;
+use App\Http\Service\ProductMigrationService;
 use Illuminate\Http\Request;
 
 class MigrationController extends Controller
@@ -13,7 +14,10 @@ class MigrationController extends Controller
     public function index()
     {
         $service = new MigrationService();
-        $service->migrate();
+        return $service->migrate();
+
+        // $product = new ProductMigrationService();
+        // return $product->migrate();
     }
 
     /**
