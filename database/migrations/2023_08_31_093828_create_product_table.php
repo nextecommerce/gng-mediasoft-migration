@@ -11,14 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('gng')->create('personal_access_tokens', function (Blueprint $table) {
+        Schema::connection('gng')
+        ->create('products', function (Blueprint $table) {
             $table->id();
-            $table->morphs('tokenable');
+            $table->integer('product_id');
             $table->string('name');
-            $table->string('token', 64)->unique();
-            $table->text('abilities')->nullable();
-            $table->timestamp('last_used_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
+            $table->integer('category_id');
+            $table->string('category_name');
+            $table->integer('model_id');
+            $table->string('model_name');
+            $table->integer('brand_id');
+            $table->string('brand_name');
             $table->timestamps();
         });
     }
@@ -28,6 +31,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('gng')->dropIfExists('personal_access_tokens');
+        Schema::connection('gng')
+        ->dropIfExists('product');
     }
 };

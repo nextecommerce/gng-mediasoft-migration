@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('gng')->create('users', function (Blueprint $table) {
+        Schema::connection('gng')
+        ->create('product_variations', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
-            $table->rememberToken();
+            $table->string('product_id');
+            $table->string('item_id');
+            $table->string('s_bar_code');
+            $table->string('p_bar_code');
+            $table->integer('quantity')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('gng')->dropIfExists('users');
+        Schema::connection('gng')->dropIfExists('product_variations');
     }
 };

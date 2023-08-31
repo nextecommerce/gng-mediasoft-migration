@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Service\MediaSoftService;
 use App\Http\Service\MigrationService;
 use App\Http\Service\ProductMigrationService;
 use Illuminate\Http\Request;
@@ -13,58 +14,23 @@ class MigrationController extends Controller
      */
     public function index()
     {
-        $service = new MigrationService();
-        return $service->migrate();
+        // $service = new MigrationService();
+        // return $service->migrate();
 
         // $product = new ProductMigrationService();
         // return $product->migrate();
+
+        $mediaSoftService = new MediaSoftService();
+        return $mediaSoftService->dump();
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of the resource.
      */
-    public function create()
+    public function mediasoft()
     {
-        //
+        $mediaSoftService = new MediaSoftService();
+        return $mediaSoftService->dump();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }
