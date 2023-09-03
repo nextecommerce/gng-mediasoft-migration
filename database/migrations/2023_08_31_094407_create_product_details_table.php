@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('gng')->dropIfExists('product_variations');
+        Schema::connection('gng')->dropIfExists('mediasoft_product_variations');
     }
 };

@@ -31,7 +31,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('gng')
-        ->dropIfExists('product');
+        Schema::connection('saas')
+        ->dropIfExists('mediasoft_products');
     }
 };

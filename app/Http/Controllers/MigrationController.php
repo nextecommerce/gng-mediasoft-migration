@@ -9,9 +9,6 @@ use Illuminate\Http\Request;
 
 class MigrationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         // $service = new MigrationService();
@@ -32,5 +29,4 @@ class MigrationController extends Controller
         $mediaSoftService = new MediaSoftService();
         return $mediaSoftService->dump();
     }
-
 }
