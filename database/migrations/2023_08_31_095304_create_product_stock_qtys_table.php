@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('gng')
-        ->create('product_stock_qtys', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+        // Schema::connection('gng')
+        // ->create('product_stock_qtys', function (Blueprint $table) {
+        //     $table->id();
+        //     $table->timestamps();
+        // });
     }
 
     /**

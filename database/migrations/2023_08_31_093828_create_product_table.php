@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::connection('gng')
-        ->create('products', function (Blueprint $table) {
+        ->create('mediasoft_products', function (Blueprint $table) {
             $table->id();
             $table->integer('product_id');
             $table->string('name');

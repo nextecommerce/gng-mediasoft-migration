@@ -15,7 +15,7 @@ class MediaSoftService
             'Access_token' => 'kVU41twDyttUL/SM7IO0vQ==@kVU41twDyttUL/SM7IO0vQ==yBjDG6h3c8EHJOfVj7yGnRl9Rf2Or3IAASWNxi1eNm4=',
         ])
         ->post('http://203.76.110.162:8081/Product/GetProductData', [
-            "categoryName" => "Accessories",
+            "categoryName" => "",
             "productName" => "",
             "modelName" => "",
             "brandName" => "",
@@ -26,9 +26,9 @@ class MediaSoftService
 
     public function storeData($data)
     {
-        for ($i=0; $i < 10; $i++) {
+        for ($i=0; $i < count($data); $i++) {
             DB::connection('gng')
-                ->table('products')
+                ->table('chinafashion')
                 ->insert([
                     'product_id' => $data[$i]['productId'],
                     'name' => $data[$i]['productName'],
@@ -41,11 +41,12 @@ class MediaSoftService
                 ]);
             $this->storeDetail($data[$i]['productDetailResponses']);
         }
+        return;
     }
 
     public function storeDetail($data) {
         for ($i=0; $i < count($data); $i++) {
-            DB::connection('gng')
+            DB::connection('chinafashion')
                 ->table('product_variations')
                 ->insert([
                     'product_id' => $data[$i]['productId'],

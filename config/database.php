@@ -45,12 +45,12 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('GNG_URL'),
-            'host' => env('GNG_HOST', '127.0.0.1'),
-            'port' => env('GNG_PORT', '3306'),
-            'database' => env('GNG_DATABASE', 'forge'),
-            'username' => env('GNG_USERNAME', 'forge'),
-            'password' => env('GNG_PASSWORD', ''),
+            'url' => env('SAAS_URL'),
+            'host' => env('SAAS_HOST', '127.0.0.1'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('SAAS_DATABASE', 'forge'),
+            'username' => env('SAAS_USERNAME', 'forge'),
+            'password' => env('SAAS_PASSWORD', ''),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
