@@ -27,7 +27,7 @@ class MediaSoftService
     public function storeData($data)
     {
         for ($i=0; $i < count($data); $i++) {
-            DB::connection('gng')
+            DB::connection('saas')
                 ->table('chinafashion')
                 ->insert([
                     'product_id' => $data[$i]['productId'],
@@ -46,7 +46,7 @@ class MediaSoftService
 
     public function storeDetail($data) {
         for ($i=0; $i < count($data); $i++) {
-            DB::connection('chinafashion')
+            DB::connection('saas')
                 ->table('product_variations')
                 ->insert([
                     'product_id' => $data[$i]['productId'],

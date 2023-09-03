@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('gng')
+        Schema::connection('saas')
         ->create('mediasoft_product_variations', function (Blueprint $table) {
             $table->id();
             $table->string('product_id');
