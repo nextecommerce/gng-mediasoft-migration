@@ -8,9 +8,9 @@ class MigrationService
 {
     public function migrate()
     {
-        // return $this->migrateCategory();
-        // return $this->migrateBrand();
-        // return $this->migrateAttribute();
+        $this->migrateCategory();
+        $this->migrateBrand();
+        $this->migrateAttribute();
         return $this->attributeValueMigration();
     }
 
@@ -40,7 +40,7 @@ class MigrationService
             array_push($categoryList, $category);
         }
         return DB::connection('saas')
-        ->table('categories')
+        ->table('category')
         ->insert($categoryList);
     }
 
@@ -68,7 +68,7 @@ class MigrationService
         }
         return DB::connection('saas')
         ->table('brand')
-        ->insert($brand);
+        ->insert($brandList);
     }
 
     public function migrateAttribute()
@@ -103,7 +103,6 @@ class MigrationService
     {
         $attributes = DB::connection('gng')
             ->table('portonics_attribute')
-            ->take(5)
             ->get();
 
         for ($i=0; $i < count($attributes); $i++) {
@@ -131,7 +130,7 @@ class MigrationService
 
     public function specificationMigration()
     {
-        return $specifications = DB::connection('gng')
+        return DB::connection('gng')
         ->table('portonics_specification')
         ->join('portonics_specification_translation', 'portonics_specification.id', '=', 'portonics_specification_translation.specification_id')
         ->get();

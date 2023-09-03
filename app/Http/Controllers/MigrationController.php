@@ -11,8 +11,8 @@ class MigrationController extends Controller
 {
     public function index()
     {
-        // $service = new MigrationService();
-        // return $service->migrate();
+        $service = new MigrationService();
+        return $service->migrate();
 
         // $product = new ProductMigrationService();
         // return $product->migrate();
