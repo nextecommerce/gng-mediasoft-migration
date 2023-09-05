@@ -17,7 +17,7 @@ export class AppController {
 
   @Get('product-data')
   async productData() {
-    return this.appService.migrateSkuAttribute();
+    return this.appService.migrateSpecification();
   }
 
   @Get('update-data')

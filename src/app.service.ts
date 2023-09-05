@@ -200,7 +200,6 @@ export class AppService {
   }
 
   async migrateSkuAttribute() {
-    // get product list
     const products = await this.knex('portonics_product');
     const attributeList = await this.knex('portonics_attribute_translation');
     for (let index = 0; index < products.length; index++) {
