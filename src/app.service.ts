@@ -235,4 +235,6 @@ export class AppService {
       });
     }
   }
+
+  async updateDailyData() {}
 }
