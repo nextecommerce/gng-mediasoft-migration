@@ -12,16 +12,16 @@ export class AppController {
 
   @Get('migrate-data')
   migrateData() {
-    return this.appService.migrateSku();
+    // return this.appService.migrateSku();
   }
 
   @Get('product-data')
   async productData() {
-    return this.appService.migrateSpecification();
+    // return this.appService.migrateSpecification();
   }
 
   @Get('update-data')
   async updateData() {
-    return this.appService.updateModelName();
+    // return this.appService.updateModelName();
   }
 }
