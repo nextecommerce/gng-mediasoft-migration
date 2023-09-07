@@ -1,12 +1,14 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { DataMigrationService } from './DataMigration.service';
+import { ProductMigrationService } from './ProductMigration.service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
     private readonly dataMigrationService: DataMigrationService,
+    private readonly productMigrationService: ProductMigrationService,
   ) {}
 
   @Get()
@@ -16,7 +18,8 @@ export class AppController {
 
   @Get('migrate-data')
   migrateData() {
-    return this.dataMigrationService.migrate();
+    // return this.dataMigrationService.migrate();
+    return this.productMigrationService.migrateData();
   }
 
   @Get('product-data')

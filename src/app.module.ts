@@ -5,6 +5,7 @@ import { KnexModule } from 'nest-knexjs';
 import knexConfig from '../knexconfig';
 import gngConfig from '../gngconfig';
 import { DataMigrationService } from './DataMigration.service';
+import { ProductMigrationService } from './ProductMigration.service';
 
 @Module({
   imports: [
@@ -12,6 +13,6 @@ import { DataMigrationService } from './DataMigration.service';
     KnexModule.forRoot(gngConfig, 'gng'),
   ],
   controllers: [AppController],
-  providers: [AppService, DataMigrationService],
+  providers: [AppService, DataMigrationService, ProductMigrationService],
 })
 export class AppModule {}

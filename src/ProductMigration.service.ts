@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
-import { InjectModel } from 'nest-knexjs';
+import { InjectConnection } from 'nest-knexjs';
 
 @Injectable()
 export class ProductMigrationService {
-  constructor(@InjectModel() private readonly knex: Knex) {}
+  constructor(
+    @InjectConnection('gng') private readonly gng: Knex,
+    @InjectConnection('saas') private readonly saas: Knex,
+  ) {}
 
   async migrateData() {
-    const portonicsProduct = await this.knex('portonics_product_translation')
+    const portonicsProduct = await this.gng('portonics_product_translation')
       .join(
         'portonics_product',
         'portonics_product_translation.product_id',
@@ -35,12 +38,14 @@ export class ProductMigrationService {
         'portonics_product_options.*',
       );
     await this.migrateBasicData(portonicsProduct);
-    // migrate sku
+    await this.migrateSku();
+    await this.migrateSkuAttribute();
+    return await this.migrateSpecification();
   }
 
   async migrateBasicData(data) {
     for (let index = 0; index < data.length; index++) {
-      await this.knex('product').insert({
+      await this.saas('product').insert({
         id: data[index].product_id,
         name: data[index].name,
         slug: data[index].slug,
@@ -61,9 +66,9 @@ export class ProductMigrationService {
   }
 
   async migrateSku() {
-    const response = await this.knex('portonics_product');
+    const response = await this.gng('portonics_product');
     for (let index = 0; index < response.length; index++) {
-      await this.knex('sku').insert({
+      await this.saas('sku').insert({
         id: response[index].id,
         product_id: response[index].parent_id,
         sku: response[index].sku,
@@ -74,17 +79,18 @@ export class ProductMigrationService {
         status: response[index].status,
       });
     }
+    return;
   }
 
   async migrateSkuAttribute() {
-    const products = await this.knex('portonics_product');
-    const attributeList = await this.knex('portonics_attribute_translation');
+    const products = await this.gng('portonics_product');
+    const attributeList = await this.gng('portonics_attribute_translation');
     for (let index = 0; index < products.length; index++) {
       const element = products[index].combination_data;
       if (element != null && element.length > 0) {
         const jsonData = JSON.parse(element);
         for (let jsonIndex = 0; jsonIndex < jsonData.length; jsonIndex++) {
-          await this.knex('sku_attribute').insert({
+          await this.saas('sku_attribute').insert({
             sku_id: products[index].id,
             key: attributeList.find(
               (ele) => ele.attr_id == jsonData[jsonIndex].attr_id,
@@ -94,22 +100,24 @@ export class ProductMigrationService {
         }
       }
     }
+    return;
   }
 
   async migrateSpecification() {
-    const response = await this.knex('portonics_product_specification').join(
+    const response = await this.gng('portonics_product_specification').join(
       'portonics_specification_translation',
       'portonics_product_specification.specification_id',
       '=',
       'portonics_specification_translation.specification_id',
     );
     for (let index = 0; index < response.length; index++) {
-      await this.knex('specification').insert({
+      await this.saas('specification').insert({
         id: response[index].id,
         product_id: response[index].product_id,
         key: response[index].title,
         value: response[index].description,
       });
     }
+    return;
   }
 }
