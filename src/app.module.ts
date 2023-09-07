@@ -4,10 +4,14 @@ import { AppService } from './app.service';
 import { KnexModule } from 'nest-knexjs';
 import knexConfig from '../knexconfig';
 import gngConfig from '../gngconfig';
+import { DataMigrationService } from './DataMigration.service';
 
 @Module({
-  imports: [KnexModule.forRoot(knexConfig), KnexModule.forRoot(gngConfig)],
+  imports: [
+    KnexModule.forRoot(knexConfig, 'gng'),
+    KnexModule.forRoot(gngConfig, 'saas'),
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, DataMigrationService],
 })
 export class AppModule {}
