@@ -8,8 +8,8 @@ import { DataMigrationService } from './DataMigration.service';
 
 @Module({
   imports: [
-    KnexModule.forRoot(knexConfig, 'gng'),
-    KnexModule.forRoot(gngConfig, 'saas'),
+    KnexModule.forRoot(knexConfig, 'saas'),
+    KnexModule.forRoot(gngConfig, 'gng'),
   ],
   controllers: [AppController],
   providers: [AppService, DataMigrationService],

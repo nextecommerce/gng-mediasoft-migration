@@ -92,7 +92,7 @@ export class DataMigrationService {
       };
       attributeList.push(attributeInfo);
     }
-    return await this.saas('attribute').insert(attributeList);
+    return await this.saas('attributes').insert(attributeList);
   }
 
   async attributeValueMigration() {
