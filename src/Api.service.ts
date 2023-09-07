@@ -2,28 +2,38 @@ import axios from 'axios';
 
 export class ApiService {
   private static key = '';
+
   async mediaSoftApi(modelName = '', createDate = '') {
-    const config = {
-      headers: {
-        Access_token: ApiService.key,
-        Accept: 'application/json',
-      },
-    };
-    const response = await axios.post(
-      'http://203.76.110.162:8081/Product/GetProductData',
-      {
-        categoryName: '',
-        productName: '',
-        modelName: modelName,
-        brandName: '',
-        createDate: createDate,
-      },
-      config,
-    );
-    return response.data;
+    return this.apiCall('Product/GetProductData', {
+      categoryName: '',
+      productName: '',
+      modelName: modelName,
+      brandName: '',
+      createDate: createDate,
+    });
   }
 
   async mediaSoftStockApi(modelName) {
+    return await this.apiCall('Product/GetProductStockInfo', {
+      barcode: 'ALL',
+      modelName: modelName,
+      shopID: 'ALL',
+    });
+  }
+
+  async login() {
+    const response = await this.apiCall(
+      'Accounts/authenticate/Account/authenticate',
+      {
+        client_id: '123456',
+        client_secret: '123456',
+      },
+    );
+    ApiService.key = response.data.access_token;
+    return;
+  }
+
+  async apiCall(url, body) {
     const config = {
       headers: {
         Access_token: ApiService.key,
@@ -31,14 +41,10 @@ export class ApiService {
       },
     };
     const response = await axios.post(
-      'http://203.76.110.162:8081/Product/GetProductStockInfo',
-      {
-        barcode: 'ALL',
-        modelName: modelName,
-        shopID: 'ALL',
-      },
+      'http://203.76.110.162:8081/' + url,
+      body,
       config,
     );
-    return response.data;
+    if (response.status == 200) return response.data;
   }
 }

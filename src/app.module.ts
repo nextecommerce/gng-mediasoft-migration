@@ -6,6 +6,7 @@ import knexConfig from '../knexconfig';
 import gngConfig from '../gngconfig';
 import { DataMigrationService } from './DataMigration.service';
 import { ProductMigrationService } from './ProductMigration.service';
+import { MediasoftMigrationService } from './MediasoftMigration.service';
 
 @Module({
   imports: [
@@ -13,6 +14,11 @@ import { ProductMigrationService } from './ProductMigration.service';
     KnexModule.forRoot(gngConfig, 'gng'),
   ],
   controllers: [AppController],
-  providers: [AppService, DataMigrationService, ProductMigrationService],
+  providers: [
+    AppService,
+    DataMigrationService,
+    ProductMigrationService,
+    MediasoftMigrationService,
+  ],
 })
 export class AppModule {}

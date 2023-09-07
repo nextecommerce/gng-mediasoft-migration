@@ -1,16 +1,53 @@
 import { Injectable } from '@nestjs/common';
 import { Knex } from 'knex';
-import { InjectModel } from 'nest-knexjs';
+import { InjectConnection } from 'nest-knexjs';
 import { ApiService } from './Api.service';
 
 @Injectable()
 export class MediasoftMigrationService {
-  constructor(@InjectModel() private readonly knex: Knex) {}
+  constructor(
+    @InjectConnection('gng') private readonly gng: Knex,
+    @InjectConnection('saas') private readonly saas: Knex,
+  ) {}
 
-  async productData() {
+  async migrateData() {
     const apiService = new ApiService();
+    await apiService.login();
     const response = await apiService.mediaSoftApi();
+    await this.createTable();
     return await this.storeData(response.data);
+  }
+
+  async createTable() {
+    await this.saas.raw(
+      'CREATE TABLE `mediasoft_product_variations` ( ' +
+        '`id` bigint unsigned NOT NULL AUTO_INCREMENT, ' +
+        '`product_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`item_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`s_bar_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`p_bar_code` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`quantity` int DEFAULT NULL,' +
+        '`created_at` timestamp NULL DEFAULT NULL,' +
+        '`updated_at` timestamp NULL DEFAULT NULL,' +
+        '`model_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,' +
+        'PRIMARY KEY (`id`))',
+    );
+
+    await this.saas.raw(
+      'CREATE TABLE `mediasoft_products` ( ' +
+        '`id` bigint unsigned NOT NULL AUTO_INCREMENT,' +
+        '`product_id` int NOT NULL,' +
+        '`name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`category_id` int NOT NULL,' +
+        '`category_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`model_id` int NOT NULL,' +
+        '`model_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`brand_id` int NOT NULL,' +
+        '`brand_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`created_at` timestamp NULL DEFAULT NULL,' +
+        '`updated_at` timestamp NULL DEFAULT NULL,' +
+        'PRIMARY KEY (`id`)) ',
+    );
   }
 
   async storeData(data) {
@@ -25,7 +62,7 @@ export class MediasoftMigrationService {
         brand_id: element.brandId,
         brand_name: element.brandName,
       };
-      const productId = await this.knex('mediasoft_products').insert(data);
+      const productId = await this.saas('mediasoft_products').insert(data);
       await this.storeDetail(element.productDetailResponses, productId[0]);
     });
     return;
@@ -41,13 +78,13 @@ export class MediasoftMigrationService {
         p_bar_code: element.pBarCode,
         quantity: element.modelName,
       };
-      await this.knex('mediasoft_product_variations').insert(data);
+      await this.saas('mediasoft_product_variations').insert(data);
     });
     return;
   }
 
   async updateModelName() {
-    await this.knex.raw(
+    await this.saas.raw(
       'UPDATE portonics_product ' +
         'JOIN mediasoft_product_variations ON portonics_product.sku = mediasoft_product_variations.p_bar_code ' +
         'SET portonics_product.model_name = mediasoft_product_variations.p_bar_code',
