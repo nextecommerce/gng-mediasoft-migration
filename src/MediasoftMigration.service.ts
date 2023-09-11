@@ -11,6 +11,7 @@ export class MediasoftMigrationService {
   ) {}
 
   async migrateData() {
+    await this.updateModelName();
     const apiService = new ApiService();
     await apiService.login();
     const response = await apiService.mediaSoftApi();
@@ -85,9 +86,9 @@ export class MediasoftMigrationService {
 
   async updateModelName() {
     await this.saas.raw(
-      'UPDATE portonics_product ' +
-        'JOIN mediasoft_product_variations ON portonics_product.sku = mediasoft_product_variations.p_bar_code ' +
-        'SET portonics_product.model_name = mediasoft_product_variations.p_bar_code',
+      'UPDATE product ' +
+        'JOIN mediasoft_product_variations ON product.sku = mediasoft_product_variations.p_bar_code ' +
+        'SET product.ms_model_name = mediasoft_product_variations.p_bar_code',
     );
   }
 }
