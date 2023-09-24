@@ -10,7 +10,6 @@ export class ProductMigrationService {
   ) {}
 
   async migrateData() {
-    // return await this.migrateStock();
     const portonicsProduct = await this.gng('portonics_product_translation')
       .join(
         'portonics_product',
@@ -38,10 +37,12 @@ export class ProductMigrationService {
         'portonics_product_warranty_and_support.*',
         'portonics_product_options.*',
       );
-    return await this.migrateBasicData(portonicsProduct);
+    await this.migrateBasicData(portonicsProduct);
     await this.migrateSku();
     await this.migrateSkuAttribute();
-    return await this.migrateSpecification();
+    await this.migrateSpecification();
+    await this.migrateStock();
+    await this.migrateImage();
   }
 
   async migrateBasicData(data) {

@@ -11,13 +11,13 @@ export class MediasoftMigrationService {
   ) {}
 
   async migrateData() {
-    return await this.storeStock();
+    await this.storeStock();
     const apiService = new ApiService();
     await apiService.login();
     const response = await apiService.mediaSoftApi();
     await this.createTable();
-    return await this.storeData(response.data);
-    // await this.updateModelName();
+    await this.storeData(response.data);
+    await this.updateModelName();
   }
 
   async createTable() {
@@ -110,7 +110,6 @@ export class MediasoftMigrationService {
         modelNames[index].model_name,
       );
       if (response.data == null) continue;
-      console.log('Model name ', response.data);
       response.data.forEach(async (element) => {
         element.stockList.forEach(async (stock) => {
           const data = {
