@@ -11,16 +11,16 @@ export class MediasoftMigrationService {
   ) {}
 
   async migrateData() {
-    await this.updateModelName();
     const apiService = new ApiService();
     await apiService.login();
     const response = await apiService.mediaSoftApi();
     await this.createTable();
-    return await this.storeData(response.data);
+    await this.storeData(response.data);
+    await this.updateModelName();
   }
 
   async createTable() {
-    await this.saas.raw(
+    await this.gng.raw(
       'CREATE TABLE `mediasoft_product_variations` ( ' +
         '`id` bigint unsigned NOT NULL AUTO_INCREMENT, ' +
         '`product_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
@@ -34,7 +34,7 @@ export class MediasoftMigrationService {
         'PRIMARY KEY (`id`))',
     );
 
-    await this.saas.raw(
+    await this.gng.raw(
       'CREATE TABLE `mediasoft_products` ( ' +
         '`id` bigint unsigned NOT NULL AUTO_INCREMENT,' +
         '`product_id` int NOT NULL,' +
@@ -45,6 +45,7 @@ export class MediasoftMigrationService {
         '`model_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
         '`brand_id` int NOT NULL,' +
         '`brand_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`shop_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
         '`created_at` timestamp NULL DEFAULT NULL,' +
         '`updated_at` timestamp NULL DEFAULT NULL,' +
         'PRIMARY KEY (`id`)) ',
@@ -63,7 +64,7 @@ export class MediasoftMigrationService {
         brand_id: element.brandId,
         brand_name: element.brandName,
       };
-      const productId = await this.saas('mediasoft_products').insert(data);
+      const productId = await this.gng('mediasoft_products').insert(data);
       await this.storeDetail(element.productDetailResponses, productId[0]);
     });
     return;
@@ -78,17 +79,18 @@ export class MediasoftMigrationService {
         s_bar_code: element.sBarCode,
         p_bar_code: element.pBarCode,
         quantity: element.modelName,
+        shop_id: element.shopID,
       };
-      await this.saas('mediasoft_product_variations').insert(data);
+      await this.gng('mediasoft_product_variations').insert(data);
     });
     return;
   }
 
   async updateModelName() {
-    await this.saas.raw(
-      'UPDATE product ' +
-        'JOIN mediasoft_product_variations ON product.sku = mediasoft_product_variations.p_bar_code ' +
-        'SET product.ms_model_name = mediasoft_product_variations.p_bar_code',
+    await this.gng.raw(
+      'UPDATE portonics_product' +
+        +'JOIN mediasoft_product_variations ON portonics_product.sku = mediasoft_product_variations.p_bar_code' +
+        +'SET portonics_product.model_name = mediasoft_product_variations.model_name;',
     );
   }
 }

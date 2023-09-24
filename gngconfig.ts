@@ -12,6 +12,7 @@ const config = {
       database: process.env.GNG_DATABASE,
       timezone: 'UTC',
       dateStrings: true,
+      requestTimeout: 1200000,
     },
   },
 };

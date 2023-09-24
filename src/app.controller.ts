@@ -19,9 +19,9 @@ export class AppController {
   }
 
   @Get('migrate-data')
-  migrateData() {
-    // return this.dataMigrationService.migrate();
-    return this.mediasoftMigrationService.migrateData();
+  async migrateData() {
+    await this.mediasoftMigrationService.migrateData();
+    await this.dataMigrationService.migrate();
   }
 
   @Get('product-data')
