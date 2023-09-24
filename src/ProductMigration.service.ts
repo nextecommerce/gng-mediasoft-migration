@@ -141,4 +141,33 @@ export class ProductMigrationService {
       await this.saas('sku_stock').insert(sku_stocks);
     }
   }
+
+  async migrateImage() {
+    const productImages = await this.gng('portonics_product_images').orderBy(
+      'product_id',
+    );
+    let parentProductId = productImages[0].product_id;
+    let images = [];
+    for (let index = 0; index < 10; index++) {
+      console.log('before change ', parentProductId);
+      if (parentProductId == productImages[index + 1]['product_id']) {
+        images.push(productImages[index]['name']);
+      } else {
+        await this.saas('sku')
+          .where({ product_id: parentProductId })
+          .first()
+          .then((row) => {
+            this.saas('products').where('id', parentProductId).update({
+              thumbnail: images[0],
+            });
+            if (row == undefined) return;
+            this.saas('sku').where('id', row.id).update({
+              images: images.toString(),
+            });
+          });
+        parentProductId = productImages[index + 1].product_id;
+        images = [];
+      }
+    }
+  }
 }

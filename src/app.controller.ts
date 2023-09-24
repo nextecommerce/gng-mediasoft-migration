@@ -26,7 +26,7 @@ export class AppController {
 
   @Get('product-data')
   async productData() {
-    return this.productMigrationService.migrateStock();
+    return this.productMigrationService.migrateImage();
   }
 
   @Get('update-data')
