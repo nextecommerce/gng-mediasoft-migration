@@ -11,12 +11,13 @@ export class MediasoftMigrationService {
   ) {}
 
   async migrateData() {
+    return await this.storeStock();
     const apiService = new ApiService();
     await apiService.login();
     const response = await apiService.mediaSoftApi();
     await this.createTable();
-    await this.storeData(response.data);
-    await this.updateModelName();
+    return await this.storeData(response.data);
+    // await this.updateModelName();
   }
 
   async createTable() {
@@ -45,7 +46,18 @@ export class MediasoftMigrationService {
         '`model_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
         '`brand_id` int NOT NULL,' +
         '`brand_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
-        '`shop_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`created_at` timestamp NULL DEFAULT NULL,' +
+        '`updated_at` timestamp NULL DEFAULT NULL,' +
+        'PRIMARY KEY (`id`)) ',
+    );
+
+    await this.gng.raw(
+      'CREATE TABLE `mediasoft_product_stock` ( ' +
+        '`id` bigint unsigned NOT NULL AUTO_INCREMENT,' +
+        '`item_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`shop_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,' +
+        '`pBarCode` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL,' +
+        '`stock_quantity` int NOT NULL,' +
         '`created_at` timestamp NULL DEFAULT NULL,' +
         '`updated_at` timestamp NULL DEFAULT NULL,' +
         'PRIMARY KEY (`id`)) ',
@@ -79,11 +91,38 @@ export class MediasoftMigrationService {
         s_bar_code: element.sBarCode,
         p_bar_code: element.pBarCode,
         quantity: element.modelName,
-        shop_id: element.shopID,
       };
       await this.gng('mediasoft_product_variations').insert(data);
     });
     return;
+  }
+
+  async storeStock() {
+    const modelNames =
+      await this.gng('mediasoft_products').select('model_name');
+    const apiService = new ApiService();
+    apiService.login();
+    for (let index = 0; index < modelNames.length; index++) {
+      if (index % 10 == 0) {
+        await new Promise((resolve) => setTimeout(resolve, 500));
+      }
+      const response = await apiService.mediaSoftStockApi(
+        modelNames[index].model_name,
+      );
+      if (response.data == null) continue;
+      console.log('Model name ', response.data);
+      response.data.forEach(async (element) => {
+        element.stockList.forEach(async (stock) => {
+          const data = {
+            item_iD: stock.itemID,
+            pBarcode: stock.pBarCode,
+            shop_id: stock.shopID,
+            stock_quantity: stock.balQty,
+          };
+          await this.gng('mediasoft_product_stock').insert(data);
+        });
+      });
+    }
   }
 
   async updateModelName() {

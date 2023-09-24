@@ -10,6 +10,7 @@ export class ProductMigrationService {
   ) {}
 
   async migrateData() {
+    return await this.migrateStock();
     const portonicsProduct = await this.gng('portonics_product_translation')
       .join(
         'portonics_product',
@@ -119,5 +120,25 @@ export class ProductMigrationService {
       });
     }
     return;
+  }
+
+  async migrateStock() {
+    const skuList = await this.saas('sku');
+    for (let index = 0; index < skuList.length; index++) {
+      const mediasoft_product_stocks = await this.gng(
+        'mediasoft_product_stock',
+      ).where({ item_id: skuList[index].sku });
+      if (mediasoft_product_stocks.length == 0) continue;
+      const sku_stocks = [];
+      for (let i = 0; i < mediasoft_product_stocks.length; i++) {
+        const stock = {
+          sku_id: skuList[index].id,
+          store_code: mediasoft_product_stocks[i].shop_id,
+          stock_quantity: mediasoft_product_stocks[i].stock_quantity,
+        };
+        sku_stocks.push(stock);
+      }
+      await this.saas('sku_stock').insert(sku_stocks);
+    }
   }
 }
