@@ -10,7 +10,7 @@ export class ProductMigrationService {
   ) {}
 
   async migrateData() {
-    return await this.migrateStock();
+    // return await this.migrateStock();
     const portonicsProduct = await this.gng('portonics_product_translation')
       .join(
         'portonics_product',
@@ -38,7 +38,7 @@ export class ProductMigrationService {
         'portonics_product_warranty_and_support.*',
         'portonics_product_options.*',
       );
-    await this.migrateBasicData(portonicsProduct);
+    return await this.migrateBasicData(portonicsProduct);
     await this.migrateSku();
     await this.migrateSkuAttribute();
     return await this.migrateSpecification();
@@ -148,20 +148,21 @@ export class ProductMigrationService {
     );
     let parentProductId = productImages[0].product_id;
     let images = [];
-    for (let index = 0; index < 10; index++) {
-      console.log('before change ', parentProductId);
+    console.log(productImages.length);
+    for (let index = 0; index < productImages.length; index++) {
       if (parentProductId == productImages[index + 1]['product_id']) {
         images.push(productImages[index]['name']);
       } else {
         await this.saas('sku')
           .where({ product_id: parentProductId })
           .first()
-          .then((row) => {
-            this.saas('products').where('id', parentProductId).update({
-              thumbnail: images[0],
-            });
+          .then(async (row) => {
             if (row == undefined) return;
-            this.saas('sku').where('id', row.id).update({
+            if (images.length > 0)
+              await this.saas('product').where('id', parentProductId).update({
+                thumbnail: images[0],
+              });
+            await this.saas('sku').where('id', row.id).update({
               images: images.toString(),
             });
           });
