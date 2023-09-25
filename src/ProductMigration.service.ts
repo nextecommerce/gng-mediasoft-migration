@@ -144,31 +144,33 @@ export class ProductMigrationService {
   }
 
   async migrateImage() {
-    const productImages = await this.gng('portonics_product_images').orderBy(
-      'product_id',
-    );
-    let parentProductId = productImages[0].product_id;
-    let images = [];
-    console.log(productImages.length);
-    for (let index = 0; index < productImages.length; index++) {
-      if (parentProductId == productImages[index + 1]['product_id']) {
-        images.push(productImages[index]['name']);
-      } else {
+    const parentProducts = await this.saas('product').pluck('id');
+    for (let index = 0; index < parentProducts.length; index++) {
+      const parentImages = await this.gng('portonics_product_images')
+        .where({
+          product_id: parentProducts[index],
+        })
+        .pluck('name');
+
+      await this.saas('product')
+        .where({ id: parentProducts[index] })
+        .update({ thumbnail: parentImages.toString() });
+
+      const skus = await this.saas('sku').where({
+        product_id: parentProducts[index],
+      });
+
+      for (let skuIndex = 0; skuIndex < skus.length; skuIndex++) {
+        const skuImages = await this.gng('portonics_product_images')
+          .where({
+            product_id: skus[skuIndex].id,
+          })
+          .pluck('name');
+
+        if (skuImages.length == 0) continue;
         await this.saas('sku')
-          .where({ product_id: parentProductId })
-          .first()
-          .then(async (row) => {
-            if (row == undefined) return;
-            if (images.length > 0)
-              await this.saas('product').where('id', parentProductId).update({
-                thumbnail: images[0],
-              });
-            await this.saas('sku').where('id', row.id).update({
-              images: images.toString(),
-            });
-          });
-        parentProductId = productImages[index + 1].product_id;
-        images = [];
+          .where({ id: skus[skuIndex].id })
+          .update({ images: skuImages.toString() });
       }
     }
   }
