@@ -174,4 +174,30 @@ export class ProductMigrationService {
       }
     }
   }
+
+  async migrateCategory() {
+    const portonicsProductCategories = await this.gng(
+      'portonics_product_categories',
+    );
+    const saasProducts = await this.saas('product');
+
+    for (let index = 0; index < saasProducts.length; index++) {
+      const categories = portonicsProductCategories.filter(
+        (category) => category.product_id == saasProducts[index].id,
+      );
+      console.log(categories);
+      await this.saas('product')
+        .where({ id: saasProducts[index]['id'] })
+        .update({
+          category_id: categories[categories.length - 1]['cat_id'],
+        });
+      for (let i = 0; i < categories.length; i++) {
+        await this.saas('product_category').insert({
+          product_id: saasProducts[index]['id'],
+          cat_id: categories[i]['cat_id'],
+          status: categories[i]['status'],
+        });
+      }
+    }
+  }
 }

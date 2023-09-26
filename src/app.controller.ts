@@ -20,7 +20,7 @@ export class AppController {
 
   @Get('migrate-data')
   async migrateData() {
-    return await this.mediasoftMigrationService.migrateData();
+    return await this.productMigrationService.migrateImage();
     await this.dataMigrationService.migrate();
   }
 
