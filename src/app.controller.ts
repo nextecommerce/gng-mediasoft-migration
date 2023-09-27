@@ -20,7 +20,7 @@ export class AppController {
 
   @Get('migrate-data')
   async migrateData() {
-    return await this.productMigrationService.migrateImage();
+    return await this.productMigrationService.migrateSpecification();
     await this.dataMigrationService.migrate();
   }
 

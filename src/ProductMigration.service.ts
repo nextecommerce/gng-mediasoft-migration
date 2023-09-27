@@ -114,7 +114,7 @@ export class ProductMigrationService {
     );
     for (let index = 0; index < response.length; index++) {
       await this.saas('specification').insert({
-        id: response[index].id,
+        // id: response[index].id,
         product_id: response[index].product_id,
         key: response[index].title,
         value: response[index].description,
