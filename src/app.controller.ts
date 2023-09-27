@@ -20,17 +20,17 @@ export class AppController {
 
   @Get('migrate-data')
   async migrateData() {
-    return await this.productMigrationService.migrateSpecification();
-    await this.dataMigrationService.migrate();
+    return await this.dataMigrationService.migrate();
   }
 
   @Get('product-data')
   async productData() {
-    return this.productMigrationService.migrateImage();
+    await this.mediasoftMigrationService.migrateData();
+    await this.productMigrationService.migrateData();
   }
 
   @Get('update-data')
   async updateData() {
-    // return this.appService.updateModelName();
+    // return this.productMigrationService.updateModelName();
   }
 }

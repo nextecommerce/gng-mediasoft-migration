@@ -42,7 +42,7 @@ export class ProductMigrationService {
     await this.migrateSkuAttribute();
     await this.migrateSpecification();
     await this.migrateStock();
-    await this.migrateImage();
+    return await this.migrateImage();
   }
 
   async migrateBasicData(data) {
