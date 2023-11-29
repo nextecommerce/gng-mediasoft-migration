@@ -7,7 +7,7 @@ export class ProductMigrationService {
   constructor(
     @InjectConnection('gng') private readonly gng: Knex,
     @InjectConnection('saas') private readonly saas: Knex,
-  ) {}
+  ) { }
 
   async migrateData() {
     const portonicsProduct = await this.gng('portonics_product_translation')
@@ -37,15 +37,18 @@ export class ProductMigrationService {
         'portonics_product_warranty_and_support.*',
         'portonics_product_options.*',
       );
-    await this.migrateBasicData(portonicsProduct);
-    await this.migrateSku();
-    await this.migrateSkuAttribute();
-    await this.migrateSpecification();
-    await this.migrateStock();
-    return await this.migrateImage();
+
+    await this.saas.transaction(async (trx) => {
+      await this.migrateBasicData(portonicsProduct, trx);
+      await this.migrateSku(trx);
+      await this.migrateSkuAttribute(trx);
+      await this.migrateSpecification(trx);
+      await this.migrateStock(trx);
+      return await this.migrateImage(trx);
+    })
   }
 
-  async migrateBasicData(data) {
+  async migrateBasicData(data, trx: Knex.Transaction) {
     for (let index = 0; index < data.length; index++) {
       await this.saas('product').insert({
         id: data[index].product_id,
@@ -62,12 +65,12 @@ export class ProductMigrationService {
         package_length: data[index].length,
         package_width: data[index].width,
         package_height: data[index].height,
-      });
+      }).transacting(trx);
     }
     return;
   }
 
-  async migrateSku() {
+  async migrateSku(trx: Knex.Transaction) {
     const response = await this.gng('portonics_product');
     for (let index = 0; index < response.length; index++) {
       await this.saas('sku').insert({
@@ -79,12 +82,12 @@ export class ProductMigrationService {
         discounted_price: response[index].sell_price,
         stock_quantity: response[index].quantity,
         status: response[index].status,
-      });
+      }).transacting(trx);
     }
     return;
   }
 
-  async migrateSkuAttribute() {
+  async migrateSkuAttribute(trx: Knex.Transaction) {
     const products = await this.gng('portonics_product');
     const attributeList = await this.gng('portonics_attribute_translation');
     for (let index = 0; index < products.length; index++) {
@@ -98,14 +101,14 @@ export class ProductMigrationService {
               (ele) => ele.attr_id == jsonData[jsonIndex].attr_id,
             ).name,
             value: jsonData[jsonIndex].value_name,
-          });
+          }).transacting(trx);
         }
       }
     }
     return;
   }
 
-  async migrateSpecification() {
+  async migrateSpecification(trx: Knex.Transaction) {
     const response = await this.gng('portonics_product_specification').join(
       'portonics_specification_translation',
       'portonics_product_specification.specification_id',
@@ -118,12 +121,12 @@ export class ProductMigrationService {
         product_id: response[index].product_id,
         key: response[index].title,
         value: response[index].description,
-      });
+      }).transacting(trx);
     }
     return;
   }
 
-  async migrateStock() {
+  async migrateStock(trx: Knex.Transaction) {
     const skuList = await this.saas('sku');
     for (let index = 0; index < skuList.length; index++) {
       const mediasoft_product_stocks = await this.gng(
@@ -139,11 +142,11 @@ export class ProductMigrationService {
         };
         sku_stocks.push(stock);
       }
-      await this.saas('sku_stock').insert(sku_stocks);
+      await this.saas('sku_stock').insert(sku_stocks).transacting(trx);
     }
   }
 
-  async migrateImage() {
+  async migrateImage(trx: Knex.Transaction) {
     const parentProducts = await this.saas('product').pluck('id');
     for (let index = 0; index < parentProducts.length; index++) {
       const parentImages = await this.gng('portonics_product_images')
@@ -154,7 +157,7 @@ export class ProductMigrationService {
 
       await this.saas('product')
         .where({ id: parentProducts[index] })
-        .update({ thumbnail: parentImages.toString() });
+        .update({ thumbnail: parentImages.toString() }).transacting(trx);
 
       const skus = await this.saas('sku').where({
         product_id: parentProducts[index],
@@ -170,12 +173,12 @@ export class ProductMigrationService {
         if (skuImages.length == 0) continue;
         await this.saas('sku')
           .where({ id: skus[skuIndex].id })
-          .update({ images: skuImages.toString() });
+          .update({ images: skuImages.toString() }).transacting(trx);
       }
     }
   }
 
-  async migrateCategory() {
+  async migrateCategory(trx: Knex.Transaction) {
     const portonicsProductCategories = await this.gng(
       'portonics_product_categories',
     );
@@ -190,13 +193,13 @@ export class ProductMigrationService {
         .where({ id: saasProducts[index]['id'] })
         .update({
           category_id: categories[categories.length - 1]['cat_id'],
-        });
+        }).transacting(trx);
       for (let i = 0; i < categories.length; i++) {
         await this.saas('product_category').insert({
           product_id: saasProducts[index]['id'],
           cat_id: categories[i]['cat_id'],
           status: categories[i]['status'],
-        });
+        }).transacting(trx);
       }
     }
   }

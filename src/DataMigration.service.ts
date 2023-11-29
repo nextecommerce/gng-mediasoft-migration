@@ -7,16 +7,18 @@ export class DataMigrationService {
   constructor(
     @InjectConnection('gng') private readonly gng: Knex,
     @InjectConnection('saas') private readonly saas: Knex,
-  ) {}
+  ) { }
 
   async migrate() {
-    await this.migrateCategory();
-    await this.migrateBrand();
-    await this.migrateAttribute();
-    return await this.attributeValueMigration();
+    await this.saas.transaction(async (trx) => {
+      await this.migrateCategory(trx);
+      await this.migrateBrand(trx);
+      // await this.migrateAttribute(trx);
+      // return await this.attributeValueMigration(trx);
+    })
   }
 
-  async migrateCategory() {
+  async migrateCategory(trx: Knex.Transaction) {
     const categories = await this.gng('portonics_category').join(
       'portonics_category_translation',
       'portonics_category.id',
@@ -36,15 +38,15 @@ export class DataMigrationService {
         is_featured: 1,
         status: category.status,
         leaf: 0,
-        created_at: category.reated_at,
-        updated_at: category.pdated_at,
+        created_at: category.created_at,
+        updated_at: category.updated_at,
       };
       categoryList.push(cat);
     }
-    return await this.saas('category').insert(categoryList);
+    return await this.saas('category').insert(categoryList).transacting(trx);
   }
 
-  async migrateBrand() {
+  async migrateBrand(trx: Knex.Transaction) {
     const brands = await this.gng('portonics_brand').join(
       'portonics_brand_translation',
       'portonics_brand.id',
@@ -66,15 +68,16 @@ export class DataMigrationService {
       };
       brandList.push(brandInfo);
     }
-    return await this.saas('brand').insert(brandList);
+    return await this.saas('brand').insert(brandList).transacting(trx);
   }
 
-  async migrateAttribute() {
+  async migrateAttribute(trx: Knex.Transaction) {
     const attributes = await this.gng('portonics_attribute').join(
       'portonics_attribute_translation',
       'portonics_attribute.id',
       'portonics_attribute_translation.attr_id',
     );
+    console.log(attributes)
     const attributeList = [];
     for (let i = 0; i < attributes.length; i++) {
       const attribute = attributes[i];
@@ -92,10 +95,10 @@ export class DataMigrationService {
       };
       attributeList.push(attributeInfo);
     }
-    return await this.saas('attributes').insert(attributeList);
+    return await this.saas('attribute').insert(attributeList).transacting(trx);
   }
 
-  async attributeValueMigration() {
+  async attributeValueMigration(trx: Knex.Transaction) {
     const attributes = await this.gng('portonics_attribute');
 
     for (let i = 0; i < attributes.length; i++) {
@@ -113,9 +116,9 @@ export class DataMigrationService {
           attributeValueList.push(attributeValues[j].value);
         }
         const attributeValueString = attributeValueList.join(',');
-        this.saas('attributes')
+        this.saas('attribute')
           .where('id', attributes[i].id)
-          .update({ options: attributeValueString });
+          .update({ options: attributeValueString }).transacting(trx);
       } catch (error) {
         console.log(error);
       }

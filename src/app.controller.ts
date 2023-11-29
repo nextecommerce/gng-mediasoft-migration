@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, HttpException } from '@nestjs/common';
 import { AppService } from './app.service';
 import { DataMigrationService } from './DataMigration.service';
 import { ProductMigrationService } from './ProductMigration.service';
@@ -11,22 +11,42 @@ export class AppController {
     private readonly dataMigrationService: DataMigrationService,
     private readonly productMigrationService: ProductMigrationService,
     private readonly mediasoftMigrationService: MediasoftMigrationService,
-  ) {}
+  ) { }
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  async getHello() {
+    try {
+      return this.appService.getHello();
+    } catch (error) {
+      console.log(error);
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   @Get('migrate-data')
   async migrateData() {
-    return await this.dataMigrationService.migrate();
+    try {
+      await this.dataMigrationService.migrate();
+
+      return {
+        success: true,
+        message: "successfully migrated"
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   @Get('product-data')
   async productData() {
-    await this.mediasoftMigrationService.migrateData();
-    await this.productMigrationService.migrateData();
+    try {
+      return await this.mediasoftMigrationService.migrateData();
+      await this.productMigrationService.migrateData();
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(error.message, error.status);
+    }
   }
 
   @Get('update-data')
