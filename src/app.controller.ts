@@ -1,8 +1,9 @@
-import { Controller, Get, HttpException } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Post } from '@nestjs/common';
 import { AppService } from './app.service';
 import { DataMigrationService } from './DataMigration.service';
 import { ProductMigrationService } from './ProductMigration.service';
 import { MediasoftMigrationService } from './MediasoftMigration.service';
+import { MediaSoftProductDto } from './dto/mediasoft-product.dto';
 
 @Controller()
 export class AppController {
@@ -13,15 +14,57 @@ export class AppController {
     private readonly mediasoftMigrationService: MediasoftMigrationService,
   ) { }
 
-  @Get()
-  async getHello() {
+  @Post('mediasoft-product')
+  async getMediaSoftProduct(@Body() body: MediaSoftProductDto) {
     try {
-      return this.appService.getHello();
+      return await this.mediasoftMigrationService.getMediaSoftProduct(body);
     } catch (error) {
-      console.log(error);
       throw new HttpException(error.message, error.status);
     }
   }
+
+  @Post('migrate-with-mediasoft')
+  async migrateMediaSoftProduct() {
+    try {
+      const data = await this.mediasoftMigrationService.migrateMediaSoftProduct();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('migrate-with-old')
+  async migrateWithOldDbProduct() {
+    try {
+      const data = await this.mediasoftMigrationService.migrateWithOldDbProduct();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   @Get('migrate-data')
   async migrateData() {
@@ -37,6 +80,13 @@ export class AppController {
       throw new HttpException(error.message, error.status);
     }
   }
+
+
+
+
+
+
+
 
   @Get('product-data')
   async productData() {

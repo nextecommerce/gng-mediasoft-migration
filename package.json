@@ -29,7 +29,8 @@
     "mysql": "^2.18.1",
     "nest-knexjs": "^0.0.17",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "objection": "^3.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

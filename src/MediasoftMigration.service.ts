@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Knex } from 'knex';
 import { InjectConnection } from 'nest-knexjs';
 import { ApiService } from './Api.service';
+import { MediaSoftProductDto } from './dto/mediasoft-product.dto';
 
 @Injectable()
 export class MediasoftMigrationService {
@@ -10,12 +11,191 @@ export class MediasoftMigrationService {
     @InjectConnection('saas') private readonly saas: Knex,
   ) { }
 
+  // return media soft products
+  async getMediaSoftProduct(mediaSoftProductDto?: MediaSoftProductDto) {
+    const apiService = new ApiService();
+    await apiService.login();
+    return await apiService.mediaSoftApi(mediaSoftProductDto);
+  }
+
+  // migrate with new database with media soft product
+  async migrateMediaSoftProduct() {
+    const products = await this.getMediaSoftProduct();
+    if (!products?.data) {
+      throw new NotFoundException('product not found');
+    }
+
+    // await this.saas.transaction(async (trx) => {
+
+    products.data?.map(async (product) => {
+      try {
+        const [productId] = await this.saas('new_product').insert({
+          mediasoft_model_id: product.modelId,
+          name: product.modelName,
+        });
+
+        product.productDetailResponses?.map(async (subProduct) => {
+          const [skuId] = await this.saas('new_sku').insert({
+            product_id: productId,
+            sku: subProduct.pBarCode,
+            custom_sku: subProduct.pBarCode,
+            stock_quantity: 1,
+            price: subProduct.salePrice,
+            discounted_price: subProduct.salePrice,
+            cost_price: subProduct.costPrice,
+            point_earn: subProduct.pointEarn,
+            sbarcode: subProduct.sBarCode,
+            vat: subProduct.vatPercent
+          });
+
+          const insertedSkuAttribute = await this.saas('new_sku_attribute').insert([{
+            sku_id: skuId,
+            key: 'Color',
+            value: subProduct.colorName,
+          }, {
+            sku_id: skuId,
+            key: 'Memory',
+            value: subProduct.memoryCapacity,
+          }]);
+        })
+      } catch (error) {
+        console.log(error.message);
+      }
+    })
+
+
+    return `${products.data.length} products successfully inserted`;
+  }
+
+  private async getAllOldProductInfo(newDbAllSku: string[]) {
+    // parent products
+    const oldProductsParentIds = await this.gng('portonics_product').distinct().whereIn('sku', newDbAllSku).pluck('parent_id');
+
+    const oldProducts = await this.gng('portonics_product')
+      .select(
+        'portonics_product.id',
+        'slug',
+        'sku',
+        'brand_id',
+        'ws_title',
+        'ws_text',
+        'name',
+        'percent',
+        'keywords',
+        'meta_description',
+        'portonics_product_translation.description',
+        'short_description',
+        'items_in_the_box',
+        'header',
+        'footer'
+      )
+      .leftJoin(
+        'portonics_product_translation',
+        'portonics_product_translation.product_id',
+        '=',
+        'portonics_product.id'
+      )
+      .leftJoin(
+        'portonics_product_tax',
+        'portonics_product_tax.product_id',
+        '=',
+        'portonics_product.id'
+      )
+      .leftJoin(
+        'portonics_product_warranty_and_support',
+        'portonics_product_warranty_and_support.product_id',
+        '=',
+        'portonics_product.id'
+      )
+      .whereIn('portonics_product.id', oldProductsParentIds);
+
+    const allProductsPromise = oldProducts.map(async (product) => {
+      const specification = await this.gng('portonics_product_specification')
+        .rightJoin(
+          'portonics_specification_translation',
+          'portonics_specification_translation.specification_id',
+          '=',
+          'portonics_product_specification.specification_id'
+        )
+        .where('product_id', product.id);
+      const images = await this.gng('portonics_product_images')
+        .where('product_id', product.id);
+
+      const imagesStr = images?.map(image => image.name).toString();
+
+      return {
+        ...product,
+        specification: specification,
+        images: images,
+        imagesStr: imagesStr || null
+      }
+    })
+
+    return await Promise.all(allProductsPromise);
+  }
+
+  private async getAllOldSkuProductsInfo(newDbAllSku: string[]) {
+    // sku products
+    const oldSkuProducts = await this.gng('portonics_product')
+      .select(
+        'portonics_product.id',
+        'slug',
+        'sku',
+        'brand_id',
+        'status'
+      )
+      .whereIn('sku', newDbAllSku);
+
+    const allSkuProductsPromise = oldSkuProducts.map(async (product) => {
+      const images = await this.gng('portonics_product_images')
+        .where('product_id', product.id);
+      const imagesStr = images?.map(image => image.name).toString();
+
+      return {
+        ...product,
+        images: images,
+        imagesStr: imagesStr || null
+      }
+    });
+
+
+    return await Promise.all(allSkuProductsPromise);
+  }
+
+  // migrate with old db
+  async migrateWithOldDbProduct() {
+    const newDbAllSku = (await this.saas('new_sku').select('sku')).map(sku => sku.sku);
+
+    // const oldParentProducts = await this.getAllOldProductInfo(newDbAllSku);
+    const oldSkuProducts = await this.getAllOldSkuProductsInfo(newDbAllSku);
+
+    // update sku product
+    oldSkuProducts.forEach(async (product) => {
+      await this.saas('new_sku').update({ images: product.imagesStr }).where('sku', product.sku);
+    });
+
+    return "success fully updated";
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   async migrateData() {
 
     const apiService = new ApiService();
     await apiService.login();
-    const response = await apiService.mediaSoftApi();
-    return response
+    // const response = await apiService.mediaSoftApi();
+    // return response
     // await this.gng.transaction(async (trx) => {
 
     //   // await this.createTable(trx);

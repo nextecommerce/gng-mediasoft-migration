@@ -1,16 +1,11 @@
 import axios from 'axios';
+import { MediaSoftProductDto } from './dto/mediasoft-product.dto';
 
 export class ApiService {
   private static key = '';
 
-  async mediaSoftApi(modelName = '', createDate = '') {
-    return this.apiCall('Product/GetProductData', {
-      categoryName: '',
-      productName: '',
-      modelName: modelName,
-      brandName: '',
-      createDate: createDate,
-    });
+  async mediaSoftApi(mediaSoftProductDto: MediaSoftProductDto) {
+    return this.apiCall('Product/GetProductData', mediaSoftProductDto || {});
   }
 
   async mediaSoftStockApi(modelName) {
