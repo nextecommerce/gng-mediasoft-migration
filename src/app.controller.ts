@@ -1,6 +1,6 @@
 import { Body, Controller, Get, HttpException, Post } from '@nestjs/common';
 import { MigrationService } from './migration.service';
-import { MediaSoftProductDto } from './dto/mediasoft-product.dto';
+import { MediaSoftProductDto, MediaSoftProductStockDto } from './dto/mediasoft-product.dto';
 
 @Controller()
 export class AppController {
@@ -12,6 +12,15 @@ export class AppController {
   async getMediaSoftProduct(@Body() body: MediaSoftProductDto) {
     try {
       return await this.migrationService.getMediaSoftProduct(body);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('mediasoft-product-stock')
+  async getMediaSoftProductStock(@Body() body: MediaSoftProductStockDto) {
+    try {
+      return await this.migrationService.getMediaSoftProductStock(body);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }

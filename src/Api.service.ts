@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MediaSoftProductDto } from './dto/mediasoft-product.dto';
+import { MediaSoftProductDto, MediaSoftProductStockDto } from './dto/mediasoft-product.dto';
 
 export class ApiService {
   private static key = '';
@@ -8,11 +8,11 @@ export class ApiService {
     return this.apiCall('Product/GetProductData', mediaSoftProductDto || {});
   }
 
-  async mediaSoftStockApi(modelName) {
+  async mediaSoftStockApi(mediaSoftProductStockDto: MediaSoftProductStockDto) {
     return await this.apiCall('Product/GetProductStockInfo', {
-      barcode: 'ALL',
-      modelName: modelName,
-      shopID: 'ALL',
+      barcode: mediaSoftProductStockDto.barcode || 'ALL',
+      modelName: mediaSoftProductStockDto.modelName || 'ALL',
+      shopID: mediaSoftProductStockDto.shopID || 'ALL',
     });
   }
 

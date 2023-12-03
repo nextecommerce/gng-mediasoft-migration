@@ -6,3 +6,9 @@ export class MediaSoftProductDto {
     brandName?: string;
     createDate?: Date;
 }
+
+export class MediaSoftProductStockDto {
+    barcode?: string;
+    modelName?: string;
+    shopID?: string;
+}

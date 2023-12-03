@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Knex } from 'knex';
 import { InjectConnection } from 'nest-knexjs';
 import { ApiService } from './Api.service';
-import { MediaSoftProductDto } from './dto/mediasoft-product.dto';
+import { MediaSoftProductDto, MediaSoftProductStockDto } from './dto/mediasoft-product.dto';
 
 @Injectable()
 export class MigrationService {
@@ -16,6 +16,13 @@ export class MigrationService {
     const apiService = new ApiService();
     await apiService.login();
     return await apiService.mediaSoftApi(mediaSoftProductDto);
+  }
+
+  // return media soft products
+  async getMediaSoftProductStock(mediaSoftProductStockDto: MediaSoftProductStockDto) {
+    const apiService = new ApiService();
+    await apiService.login();
+    return await apiService.mediaSoftStockApi(mediaSoftProductStockDto);
   }
 
   // migrate with new database from media soft product
@@ -352,6 +359,7 @@ export class MigrationService {
         id: brand.id,
         name: brand.name,
         slug: brand.slug,
+        banner: brand.banner,
         logo: brand.banner,
         description: brand.description,
         status: brand.status,
