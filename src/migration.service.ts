@@ -306,7 +306,6 @@ export class MigrationService {
   // migrate category from old db to new
   private async migrateCategory() {
     const category = await this.saas('new_category').count('id', { as: 'total' }).first();
-
     if (category && Number(category.total) > 0) return;
 
     const categories = await this.gng('portonics_category').join(
@@ -315,8 +314,7 @@ export class MigrationService {
       'portonics_category_translation.cat_id',
     );
     const categoryList = [];
-    for (let i = 0; i < categories.length; i++) {
-      const category = categories[i];
+    categories?.forEach(category => {
       const cat = {
         id: category.id,
         name: category.name,
@@ -332,7 +330,8 @@ export class MigrationService {
         updated_at: category.updated_at,
       };
       categoryList.push(cat);
-    }
+    });
+
     return await this.saas('new_category').insert(categoryList);
   }
 
