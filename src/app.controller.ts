@@ -62,4 +62,18 @@ export class AppController {
     }
   }
 
+  @Post('migrate-with-old-category-brand-attribute')
+  async migrateBrandCategoryAttribute() {
+    try {
+      const data = await this.migrationService.migrateBrandCategoryAttribute();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
 }

@@ -65,11 +65,21 @@ export class MigrationService {
     const newDbAllSku = (await this.saas('new_sku').select('sku')).map(sku => sku.sku);
 
     const oldParentProducts = await this.getAllOldProductInfo(newDbAllSku);
+    // console.log(oldParentProducts.length)
+    // return oldParentProducts;
 
     // update parent products
     oldParentProducts.forEach(async (product) => {
       await this.updateNewDbFromOldProducts(product);
     });
+
+    return "Successfully migrated";
+  }
+
+  async migrateBrandCategoryAttribute() {
+    await this.migrateCategory();
+    await this.migrateBrand();
+    await this.migrateAttribute();
 
     return "Successfully migrated";
   }
@@ -129,12 +139,16 @@ export class MigrationService {
           'portonics_product_specification.specification_id'
         )
         .where('product_id', product.id);
+
       const images = await this.gng('portonics_product_images')
         .where('product_id', product.id);
+
+      const category = await this.gng('portonics_product_categories').where('product_id', product.id).first();
 
       const imagesStr = images?.map(image => image.name).toString();
 
       return {
+        category_id: category ? category.cat_id : null,
         ...product,
         specification: specification,
         images: images,
@@ -255,6 +269,7 @@ export class MigrationService {
       slug: product.slug,
       thumbnail: product.imagesStr,
       long_description: product.description,
+      category_id: product.category_id,
       brand_id: product.brand_id,
       warranty: product.ws_title,
       warranty_policy: product.ws_text,
@@ -286,5 +301,92 @@ export class MigrationService {
         });
       })
     }
+  }
+
+  // migrate category from old db to new
+  private async migrateCategory() {
+    const category = await this.saas('new_category').count('id', { as: 'total' }).first();
+
+    if (category && Number(category.total) > 0) return;
+
+    const categories = await this.gng('portonics_category').join(
+      'portonics_category_translation',
+      'portonics_category.id',
+      'portonics_category_translation.cat_id',
+    );
+    const categoryList = [];
+    for (let i = 0; i < categories.length; i++) {
+      const category = categories[i];
+      const cat = {
+        id: category.id,
+        name: category.name,
+        slug: category.slug,
+        parent_id: category.parent,
+        logo: category.image_banner,
+        code: '',
+        description: category.description,
+        is_featured: 1,
+        status: category.status,
+        leaf: 0,
+        created_at: category.created_at,
+        updated_at: category.updated_at,
+      };
+      categoryList.push(cat);
+    }
+    return await this.saas('new_category').insert(categoryList);
+  }
+
+  // migrate brand from old db to new
+  private async migrateBrand() {
+    const brand = await this.saas('new_brand').count('id', { as: 'total' }).first();
+    if (brand && Number(brand.total) > 0) return;
+
+    const brands = await this.gng('portonics_brand').join(
+      'portonics_brand_translation',
+      'portonics_brand.id',
+      'portonics_brand_translation.brand_id',
+    );
+    const brandList = [];
+    for (let i = 0; i < brands.length; i++) {
+      const brand = brands[i];
+      const brandInfo = {
+        id: brand.id,
+        name: brand.name,
+        slug: brand.slug,
+        logo: brand.banner,
+        description: brand.description,
+        status: brand.status,
+        is_featured: 1,
+        created_at: brand.created_at,
+        updated_at: brand.updated_at,
+      };
+      brandList.push(brandInfo);
+    }
+    return await this.saas('new_brand').insert(brandList);
+  }
+
+  // migrate attribute from old db to new
+  private async migrateAttribute() {
+    const attribute = await this.saas('new_attribute').count('id', { as: 'total' }).first();
+    if (attribute && Number(attribute.total) > 0) return;
+
+    const attributes = await this.gng('portonics_attribute_translation');
+
+    attributes.forEach(async (attribute) => {
+      const attributeValues = await this.gng('portonics_attribute_values_translation').where('attr_id', attribute.attr_id);
+      const attributeValuesStr = attributeValues?.map(attr => attr.value).join(',');
+
+      await this.saas('new_attribute').insert({
+        id: attribute.attr_id,
+        name: attribute.name,
+        label: attribute.name,
+        type: 'singleSelect',
+        options: attributeValuesStr || null,
+        is_sale_prop: 0,
+        status: attribute.status,
+        created_at: attribute.created_at,
+        updated_at: attribute.updated_at,
+      });
+    });
   }
 }
