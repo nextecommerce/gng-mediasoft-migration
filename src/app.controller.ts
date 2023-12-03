@@ -1,23 +1,17 @@
 import { Body, Controller, Get, HttpException, Post } from '@nestjs/common';
-import { AppService } from './app.service';
-import { DataMigrationService } from './DataMigration.service';
-import { ProductMigrationService } from './ProductMigration.service';
-import { MediasoftMigrationService } from './MediasoftMigration.service';
+import { MigrationService } from './migration.service';
 import { MediaSoftProductDto } from './dto/mediasoft-product.dto';
 
 @Controller()
 export class AppController {
   constructor(
-    private readonly appService: AppService,
-    private readonly dataMigrationService: DataMigrationService,
-    private readonly productMigrationService: ProductMigrationService,
-    private readonly mediasoftMigrationService: MediasoftMigrationService,
+    private readonly migrationService: MigrationService,
   ) { }
 
   @Post('mediasoft-product')
   async getMediaSoftProduct(@Body() body: MediaSoftProductDto) {
     try {
-      return await this.mediasoftMigrationService.getMediaSoftProduct(body);
+      return await this.migrationService.getMediaSoftProduct(body);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
@@ -26,7 +20,7 @@ export class AppController {
   @Post('migrate-with-mediasoft')
   async migrateMediaSoftProduct() {
     try {
-      const data = await this.mediasoftMigrationService.migrateMediaSoftProduct();
+      const data = await this.migrationService.migrateMediaSoftProduct();
 
       return {
         success: true,
@@ -38,10 +32,25 @@ export class AppController {
     }
   }
 
-  @Post('migrate-with-old')
+  @Post('migrate-with-old-sku')
+  async migrateWithOldDbSku() {
+    try {
+      const data = await this.migrationService.migrateWithOldDbSku();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('migrate-with-old-product')
   async migrateWithOldDbProduct() {
     try {
-      const data = await this.mediasoftMigrationService.migrateWithOldDbProduct();
+      const data = await this.migrationService.migrateWithOldDbProduct();
 
       return {
         success: true,
@@ -53,54 +62,4 @@ export class AppController {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  @Get('migrate-data')
-  async migrateData() {
-    try {
-      await this.dataMigrationService.migrate();
-
-      return {
-        success: true,
-        message: "successfully migrated"
-      }
-    } catch (error) {
-      console.log(error)
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-
-
-
-
-
-
-
-  @Get('product-data')
-  async productData() {
-    try {
-      return await this.mediasoftMigrationService.migrateData();
-      await this.productMigrationService.migrateData();
-    } catch (error) {
-      console.log(error)
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
-  @Get('update-data')
-  async updateData() {
-    // return this.productMigrationService.updateModelName();
-  }
 }

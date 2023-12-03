@@ -4,9 +4,7 @@ import { AppService } from './app.service';
 import { KnexModule } from 'nest-knexjs';
 import knexConfig from '../knexconfig';
 import gngConfig from '../gngconfig';
-import { DataMigrationService } from './DataMigration.service';
-import { ProductMigrationService } from './ProductMigration.service';
-import { MediasoftMigrationService } from './MediasoftMigration.service';
+import { MigrationService } from './migration.service';
 
 @Module({
   imports: [
@@ -16,9 +14,7 @@ import { MediasoftMigrationService } from './MediasoftMigration.service';
   controllers: [AppController],
   providers: [
     AppService,
-    DataMigrationService,
-    ProductMigrationService,
-    MediasoftMigrationService,
+    MigrationService,
   ],
 })
-export class AppModule {}
+export class AppModule { }
