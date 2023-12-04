@@ -6,6 +6,7 @@ import { MediaSoftProductDto, MediaSoftProductStockDto } from './dto/mediasoft-p
 
 @Injectable()
 export class MigrationService {
+  private imagePrefix = 'product/';
   constructor(
     @InjectConnection('gng') private readonly gng: Knex,
     @InjectConnection('saas') private readonly saas: Knex,
@@ -34,7 +35,7 @@ export class MigrationService {
 
     products.data?.map(async (product) => {
       try {
-        const existedProduct = await this.saas('new_product').where('mediasoft_model_id', product.modelId).first();
+        const existedProduct = await this.saas('product').where('mediasoft_model_id', product.modelId).first();
 
         if (!existedProduct) {
           // insert products to new db
@@ -55,21 +56,26 @@ export class MigrationService {
 
   // migrate with old db sku
   async migrateWithOldDbSku() {
-    const newDbAllSku = (await this.saas('new_sku').select('sku')).map(sku => sku.sku);
+    const newDbAllSku = (await this.saas('sku').select('sku')).map(sku => sku.sku);
 
     const oldSkuProducts = await this.getAllOldSkuProductsInfo(newDbAllSku);
+    oldSkuProducts.length;
 
     // update sku products
-    oldSkuProducts.forEach(async (product) => {
-      await this.saas('new_sku').update({ images: product.imagesStr }).where('sku', product.sku);
-    });
+    return this.saas.transaction(trx => {
+      const queries = oldSkuProducts.map(async (product) => {
+        return this.saas('sku').update({ images: product.imagesStr }).where('sku', product.sku).transacting(trx);;
+      });
 
-    return "Successfully migrated";
+      Promise.all(queries)
+        .then(trx.commit)
+        .catch(trx.rollback);
+    });
   }
 
   // migrate with old db
   async migrateWithOldDbProduct() {
-    const newDbAllSku = (await this.saas('new_sku').select('sku')).map(sku => sku.sku);
+    const newDbAllSku = (await this.saas('sku').select('sku')).map(sku => sku.sku);
 
     const oldParentProducts = await this.getAllOldProductInfo(newDbAllSku);
     // console.log(oldParentProducts.length)
@@ -152,7 +158,7 @@ export class MigrationService {
 
       const category = await this.gng('portonics_product_categories').where('product_id', product.id).first();
 
-      const imagesStr = images?.map(image => image.name).toString();
+      const imagesStr = images?.map(image => this.imagePrefix + image.name).toString();
 
       return {
         category_id: category ? category.cat_id : null,
@@ -165,7 +171,7 @@ export class MigrationService {
 
     const allMatchedProducts = await Promise.all(allProductsPromise);
 
-    const newDbSkuAndProductIds = await this.saas('new_sku').distinct('product_id', 'sku').whereIn('sku', [...oldProductsParentIdsMap.values()]);
+    const newDbSkuAndProductIds = await this.saas('sku').distinct('product_id', 'sku').whereIn('sku', [...oldProductsParentIdsMap.values()]);
     const newProductsProductIdsMap = new Map(newDbSkuAndProductIds?.map(product => [product.sku, product.product_id]));
 
     return allMatchedProducts?.map(product => {
@@ -196,7 +202,7 @@ export class MigrationService {
     const allSkuProductsPromise = oldSkuProducts.map(async (product) => {
       const images = await this.gng('portonics_product_images')
         .where('product_id', product.id);
-      const imagesStr = images?.map(image => image.name).toString();
+      const imagesStr = images?.map(image => this.imagePrefix + image.name).toString();
 
       return {
         ...product,
@@ -211,13 +217,13 @@ export class MigrationService {
   // update product to new dab
   private async updateProductToNewDb(product, existedProduct) {
     product.productDetailResponses?.map(async (subProduct) => {
-      const existedSkuProduct = await this.saas('new_sku').where('sku', subProduct.pBarCode).first();
+      const existedSkuProduct = await this.saas('sku').where('sku', subProduct.pBarCode).first();
 
       if (!existedSkuProduct) {
         await this.insertIntoSkuAndAttribute(existedProduct.id, subProduct);
       } else {
 
-        await this.saas('new_sku').update({
+        await this.saas('sku').update({
           stock_quantity: 1,
           price: subProduct.salePrice,
           discounted_price: subProduct.salePrice,
@@ -232,7 +238,7 @@ export class MigrationService {
 
   // insert product into new db
   private async insertProductToNewDb(product) {
-    const [productId] = await this.saas('new_product').insert({
+    const [productId] = await this.saas('product').insert({
       mediasoft_model_id: product.modelId,
       mediasoft_model_name: product.modelName,
       name: product.modelName,
@@ -245,7 +251,7 @@ export class MigrationService {
 
   // insert sku product & attributes 
   private async insertIntoSkuAndAttribute(productId: number, subProduct) {
-    const [skuId] = await this.saas('new_sku').insert({
+    const [skuId] = await this.saas('sku').insert({
       product_id: productId,
       sku: subProduct.pBarCode,
       custom_sku: subProduct.pBarCode,
@@ -258,7 +264,7 @@ export class MigrationService {
       vat: subProduct.vatPercent
     });
 
-    await this.saas('new_sku_attribute').insert([{
+    await this.saas('sku_attribute').insert([{
       sku_id: skuId,
       key: 'Color',
       value: subProduct.colorName,
@@ -271,7 +277,8 @@ export class MigrationService {
 
   // update new db from old db products
   private async updateNewDbFromOldProducts(product) {
-    await this.saas('new_product').update({
+
+    await this.saas('product').update({
       name: product.name,
       slug: product.slug,
       thumbnail: product.imagesStr,
@@ -283,10 +290,10 @@ export class MigrationService {
       vat: product.percent,
     }).where('id', product.new_db_product_id);
 
-    const seo = await this.saas('new_seo').where('ref_id', product.new_db_product_id);
+    const seo = await this.saas('seo').where('ref_id', product.new_db_product_id);
     if (!seo?.length) {
 
-      await this.saas('new_seo').insert({
+      await this.saas('seo').insert({
         ref_id: product.new_db_product_id,
         title: product.name,
         description: product.meta_description,
@@ -297,11 +304,11 @@ export class MigrationService {
       });
     }
 
-    const specification = await this.saas('new_specification').where('product_id', product.new_db_product_id);
+    const specification = await this.saas('specification').where('product_id', product.new_db_product_id);
     if (!specification?.length) {
       product.specification?.forEach(async (spec) => {
-        // const isExist = await this.saas('new_specification').where('product_id', product.new_db_product_id)
-        await this.saas('new_specification').insert({
+        // const isExist = await this.saas('specification').where('product_id', product.new_db_product_id)
+        await this.saas('specification').insert({
           product_id: product.new_db_product_id,
           key: spec.title,
           value: spec.description
@@ -312,7 +319,7 @@ export class MigrationService {
 
   // migrate category from old db to new
   private async migrateCategory() {
-    const category = await this.saas('new_category').count('id', { as: 'total' }).first();
+    const category = await this.saas('category').count('id', { as: 'total' }).first();
     if (category && Number(category.total) > 0) return;
 
     const categories = await this.gng('portonics_category').join(
@@ -339,12 +346,12 @@ export class MigrationService {
       categoryList.push(cat);
     });
 
-    return await this.saas('new_category').insert(categoryList);
+    return await this.saas('category').insert(categoryList);
   }
 
   // migrate brand from old db to new
   private async migrateBrand() {
-    const brand = await this.saas('new_brand').count('id', { as: 'total' }).first();
+    const brand = await this.saas('brand').count('id', { as: 'total' }).first();
     if (brand && Number(brand.total) > 0) return;
 
     const brands = await this.gng('portonics_brand').join(
@@ -369,12 +376,12 @@ export class MigrationService {
       };
       brandList.push(brandInfo);
     }
-    return await this.saas('new_brand').insert(brandList);
+    return await this.saas('brand').insert(brandList);
   }
 
   // migrate attribute from old db to new
   private async migrateAttribute() {
-    const attribute = await this.saas('new_attribute').count('id', { as: 'total' }).first();
+    const attribute = await this.saas('attribute').count('id', { as: 'total' }).first();
     if (attribute && Number(attribute.total) > 0) return;
 
     const attributes = await this.gng('portonics_attribute_translation');
@@ -383,7 +390,7 @@ export class MigrationService {
       const attributeValues = await this.gng('portonics_attribute_values_translation').where('attr_id', attribute.attr_id);
       const attributeValuesStr = attributeValues?.map(attr => attr.value).join(',');
 
-      await this.saas('new_attribute').insert({
+      await this.saas('attribute').insert({
         id: attribute.attr_id,
         name: attribute.name,
         label: attribute.name,
