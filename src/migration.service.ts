@@ -3,10 +3,13 @@ import { Knex } from 'knex';
 import { InjectConnection } from 'nest-knexjs';
 import { ApiService } from './Api.service';
 import { MediaSoftProductDto, MediaSoftProductStockDto } from './dto/mediasoft-product.dto';
+import * as he from 'he';
 
 @Injectable()
 export class MigrationService {
   private imagePrefix = 'product/';
+  private brandPrefix = 'brand/';
+
   constructor(
     @InjectConnection('gng') private readonly gng: Knex,
     @InjectConnection('saas') private readonly saas: Knex,
@@ -21,9 +24,13 @@ export class MigrationService {
 
   // return media soft products
   async getMediaSoftProductStock(mediaSoftProductStockDto: MediaSoftProductStockDto) {
-    const apiService = new ApiService();
-    await apiService.login();
-    return await apiService.mediaSoftStockApi(mediaSoftProductStockDto);
+    // const apiService = new ApiService();
+    // await apiService.login();
+    // return await apiService.mediaSoftStockApi(mediaSoftProductStockDto);
+
+    const newProducts = await this.saas('product').pluck('name');
+    const oldProducts = await this.gng('portonics_product_translation').whereIn('name', newProducts).pluck('name');
+    return oldProducts.length;
   }
 
   // migrate with new database from media soft product
@@ -33,23 +40,59 @@ export class MigrationService {
       throw new NotFoundException('product not found');
     }
 
-    products.data?.map(async (product) => {
-      try {
-        const existedProduct = await this.saas('product').where('mediasoft_model_id', product.modelId).first();
+    // create category
+    const mediaSoftCategoriesSet = new Set(products.data.map(product => product.categoryName));
+    const newDbCategories = await this.saas('category');
+    const newDbCategoriesMap = new Map(newDbCategories?.map(category => [category.name, category.id]));
 
+    const createCategoryPromise = [...mediaSoftCategoriesSet].map(async (category) => {
+      if (!newDbCategoriesMap.has(category)) {
+        const [newCategoryId] = await this.saas('category').insert({ name: String(category), slug: this.generateSlug(String(category)), leaf: 0 });
+        newDbCategoriesMap.set(category, newCategoryId);
+      }
+    });
+
+    // create brand
+    const mediaSoftBrandsSet = new Set(products.data.map(product => product.brandName));
+    const newDbBrands = await this.saas('brand');
+    const newDbBrandsMap = new Map(newDbBrands?.map(brand => [String(brand.name).toLowerCase(), brand.id]));
+
+    const createBrandPromise = [...mediaSoftBrandsSet].map(async (brandName) => {
+      if (!newDbBrandsMap.has(String(brandName).toLowerCase())) {
+        const [newBrandId] = await this.saas('brand').insert({ name: String(brandName), slug: this.generateSlug(String(brandName)) });
+        newDbBrandsMap.set(String(brandName).toLowerCase(), newBrandId);
+      }
+    });
+
+    await Promise.all([...createCategoryPromise, ...createBrandPromise]);
+
+    // return [...newDbBrandsMap];
+    // create map for all new products
+    const allNewProducts = await this.saas('product').select('id', 'mediasoft_model_id', 'name');
+    const allNewProductsMap = new Map(allNewProducts?.map(product => [product.mediasoft_model_id, product]));
+
+
+    return this.saas.transaction(trx => {
+      const migratePromises = products.data?.map(async (product) => {
+        // const existedProduct = await this.saas('product').where('mediasoft_model_id', product.modelId).first();
+        const existedProduct = allNewProductsMap.get(Number(product.modelId));
+
+        const categoryId = newDbCategoriesMap.get(product.categoryName);
+        const brandId = newDbBrandsMap.get(String(product.brandName).toLowerCase());
         if (!existedProduct) {
           // insert products to new db
-          await this.insertProductToNewDb(product);
+          return await this.insertProductToNewDb(product, categoryId, brandId);
         } else {
 
           // update products to new db
-          await this.updateProductToNewDb(product, existedProduct);
+          return await this.updateProductToNewDb(product, existedProduct, categoryId, brandId, trx);
         }
-      } catch (error) {
-        console.log(error.message);
-      }
-    })
+      })
 
+      Promise.all(migratePromises)
+        .then(trx.commit)
+        .catch(trx.rollback);
+    });
 
     return `${products.data.length} products successfully migrated`;
   }
@@ -215,7 +258,14 @@ export class MigrationService {
   }
 
   // update product to new dab
-  private async updateProductToNewDb(product, existedProduct) {
+  private async updateProductToNewDb(product, existedProduct, categoryId, brandId, trx) {
+
+    // return await this.saas('product').update({
+    //   category_id: categoryId,
+    //   brand_id: brandId,
+    //   slug: this.generateSlug(String(product.modelName))
+    // }).where({ mediasoft_model_id: product.modelId, slug: null }).transacting(trx);
+
     product.productDetailResponses?.map(async (subProduct) => {
       const existedSkuProduct = await this.saas('sku').where('sku', subProduct.pBarCode).first();
 
@@ -237,11 +287,14 @@ export class MigrationService {
   }
 
   // insert product into new db
-  private async insertProductToNewDb(product) {
+  private async insertProductToNewDb(product, categoryId: number, brandId: number) {
     const [productId] = await this.saas('product').insert({
       mediasoft_model_id: product.modelId,
       mediasoft_model_name: product.modelName,
       name: product.modelName,
+      category_id: categoryId,
+      brand_id: brandId,
+      status: 'inactive'
     });
 
     product.productDetailResponses?.map(async (subProduct) => {
@@ -282,12 +335,13 @@ export class MigrationService {
       name: product.name,
       slug: product.slug,
       thumbnail: product.imagesStr,
-      long_description: product.description,
+      long_description: this.decodeHtmlEntities(String(product.description)),
       category_id: product.category_id,
       brand_id: product.brand_id,
       warranty: product.ws_title,
       warranty_policy: product.ws_text,
       vat: product.percent,
+      status: 'active'
     }).where('id', product.new_db_product_id);
 
     const seo = await this.saas('seo').where('ref_id', product.new_db_product_id);
@@ -297,7 +351,7 @@ export class MigrationService {
         ref_id: product.new_db_product_id,
         title: product.name,
         description: product.meta_description,
-        tag: product.keywords,
+        tag: JSON.stringify(product.keywords?.split(',')),
         img_alt_text: product.name,
         image: product.images?.[0]?.name,
         type: 'product',
@@ -366,8 +420,8 @@ export class MigrationService {
         id: brand.id,
         name: brand.name,
         slug: brand.slug,
-        banner: brand.banner,
-        logo: brand.banner,
+        banner: brand.banner ? this.brandPrefix + brand.banner : null,
+        logo: brand.banner ? this.brandPrefix + brand.image_large : null,
         description: brand.description,
         status: brand.status,
         is_featured: 1,
@@ -403,4 +457,20 @@ export class MigrationService {
       });
     });
   }
+
+  // decode html entities
+  private decodeHtmlEntities(encodedString: string): string {
+    return he.decode(encodedString);
+  }
+
+  // generate slug
+  private generateSlug(str: string) {
+    return str
+      .toLowerCase()
+      .trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/[\s_-]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  };
+
 }
