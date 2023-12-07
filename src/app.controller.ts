@@ -85,4 +85,18 @@ export class AppController {
     }
   }
 
+  @Post('migrate-customers')
+  async migrateCustomers() {
+    try {
+      const data = await this.migrationService.migrateCustomers();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
 }

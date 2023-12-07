@@ -132,12 +132,37 @@ export class MigrationService {
     return "Successfully migrated";
   }
 
+  // migrate brand category & attributes
   async migrateBrandCategoryAttribute() {
     await this.migrateCategory();
     await this.migrateBrand();
     await this.migrateAttribute();
 
     return "Successfully migrated";
+  }
+
+  // migrate customers
+  async migrateCustomers() {
+    const oldCustomers = await this.gng('portonics_customer');
+    const status = ['inactive', 'active', 'disabled'];
+
+    const newCustomers = oldCustomers?.map(customer => {
+      return {
+        type: 'customer',
+        avatar: customer.image,
+        first_name: customer.full_name,
+        last_name: null,
+        email: customer.email,
+        phone: customer.phone,
+        gender: null,
+        password: customer.password,
+        status: status[Number(customer.status)],
+        created_at: customer.created_at,
+        updated_at: customer.updated_at
+      }
+    });
+
+    return await this.saas('user').insert(newCustomers);
   }
 
 
