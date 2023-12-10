@@ -99,4 +99,32 @@ export class AppController {
     }
   }
 
+  @Post('migrate-orders')
+  async migrateOrders() {
+    try {
+      const data = await this.migrationService.migrateOrders();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('migrate-order-attributes')
+  async migrateOrderAttributes() {
+    try {
+      const data = await this.migrationService.migrateOrderProductAttributes();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
 }

@@ -107,7 +107,10 @@ export class MigrationService {
     // update sku products
     return this.saas.transaction(trx => {
       const queries = oldSkuProducts.map(async (product) => {
-        return this.saas('sku').update({ images: product.imagesStr }).where('sku', product.sku).transacting(trx);;
+        return this.saas('sku').update({
+          images: product.imagesStr,
+          model_no: product.model_no
+        }).where('sku', product.sku).transacting(trx);;
       });
 
       Promise.all(queries)
@@ -148,6 +151,7 @@ export class MigrationService {
 
     const newCustomers = oldCustomers?.map(customer => {
       return {
+        id: customer.id,
         type: 'customer',
         avatar: customer.image,
         first_name: customer.full_name,
@@ -165,6 +169,132 @@ export class MigrationService {
     return await this.saas('user').insert(newCustomers);
   }
 
+  // migrate customers
+  async migrateOrders() {
+    const oldOrders = await this.gng('portonics_order')
+      .leftJoin(
+        'portonics_order_address',
+        'portonics_order_address.order_id',
+        '=',
+        'portonics_order.order_id'
+      );
+    // return oldOrders;
+
+    const newOrders = oldOrders?.map(order => {
+      return {
+        order_number: order.order_id,
+        user_id: order.customer_id,
+        subtotal: order.amount,
+        delivery_charge: order.total_shipping_cost,
+        grand_total: order.amount,
+        paid: 0,
+        due: 0,
+        payment_method: order.payment_method,
+        // payment_status: null,
+        note: order.order_note,
+        shipping_name: 'null',
+        shipping_phone: 'null',
+        shipping_email: 'null',
+        shipping_country: 'null',
+        shipping_city: 'null',
+        shipping_area: 'null',
+        shipping_street: 'null',
+        shipping_lat: null,
+        shipping_lon: null,
+        billing_name: order.billing_customer_name || 'null',
+        billing_phone: order.billing_customer_phone || 'null',
+        billing_email: order.billing_customer_email || 'null',
+        billing_country: order.country,
+        billing_city: order.city,
+        billing_area: order.post_code + " " + order.area,
+        billing_street: order.address1,
+        billing_lat: null,
+        billing_lon: null,
+        status: order.status,
+        created_at: order.created_at,
+        updated_at: order.updated_at,
+        deleted_at: null,
+        shipping_postal_code: 'null',
+        billing_postal_code: 'null',
+        discount: null,
+        offer_id: null,
+      }
+    });
+
+    await this.saas('order').insert(newOrders);
+    return await this.migrateOrderProducts();
+
+    // return "successfully migrated";
+  }
+
+  private async migrateOrderProducts() {
+    const newOrders = await this.saas('order').select('id', 'order_number');
+    const newProducts = await this.saas('product').select('id', 'category_id', 'brand_id');
+    const newSkuProducts = await this.saas('sku').select('id', 'product_id', 'sku', 'images', 'custom_sku', 'vat', 'purchase_price');
+
+    const orderMap = new Map(newOrders?.map(order => [order.order_number, order.id]));
+    const skuMap = new Map(newSkuProducts?.map(product => [product.sku, product]));
+    const productMap = new Map(newProducts?.map(product => [String(product.id), product]));
+    // order product
+    const oldOrderProducts = await this.gng('portonics_order_product');
+
+    const newOrderProducts = oldOrderProducts?.map(product => {
+      const skuProduct = product.sku ? skuMap.get(product.sku) : null;
+      const parentProduct = skuProduct ? productMap.get(String(skuProduct.product_id)) : null;
+
+      return {
+        order_id: orderMap.get(product.order_id),
+        order_number: product.order_id,
+        product_id: skuProduct ? skuProduct.product_id : null,
+        sku_id: skuProduct ? skuProduct.id : null,
+        brand_id: parentProduct ? parentProduct.brand_id : null,
+        category_id: parentProduct ? parentProduct.category_id : null,
+        sku: product.sku,
+        name: product.name,
+        slug: '',
+        thumbnail: skuProduct ? skuProduct.images : null,
+        price: product.price,
+        discounted_price: product.discount,
+        quantity: product.quantity,
+        total_price: product.total_price,
+        status: product.status,
+        created_at: product.created_at,
+        updated_at: product.updated_at,
+        deleted_at: null,
+        vat: skuProduct ? skuProduct.vat : null,
+        custom_sku: skuProduct ? skuProduct.custom_sku : null,
+        purchase_price: skuProduct ? skuProduct.purchase_price : null,
+      }
+    });
+
+    return await this.saas('order_product').insert(newOrderProducts);
+
+  }
+
+  async migrateOrderProductAttributes() {
+    const oldProductAttributes = await this.gng('portonics_order_product_attribute_combination');
+    const newOrderProducts = await this.saas('order_product');
+
+    const newProductAttributes = [];
+    newOrderProducts?.forEach(product => {
+      const oldMatchedAttributes = oldProductAttributes.filter(attribute => attribute.order_id == product.order_number);
+      if (oldMatchedAttributes) {
+        oldMatchedAttributes.forEach(mattr => {
+          newProductAttributes.push({
+            order_product_id: product.id,
+            key: mattr.attr_name,
+            value: mattr.value,
+            created_at: mattr.created_at,
+            updated_at: mattr.updated_at,
+          });
+        })
+      }
+    });
+
+    return await this.saas('order_product_attribute').insert(newProductAttributes);
+    // return newProductAttributes;
+  }
+
 
   // get all old products info
   private async getAllOldProductInfo(newDbAllSku: string[]) {
@@ -178,6 +308,7 @@ export class MigrationService {
         'portonics_product.id',
         'slug',
         'sku',
+        'model_no',
         'brand_id',
         'ws_title',
         'ws_text',
@@ -262,6 +393,7 @@ export class MigrationService {
         'portonics_product.id',
         'slug',
         'sku',
+        'model_no',
         'brand_id',
         'status'
       )
