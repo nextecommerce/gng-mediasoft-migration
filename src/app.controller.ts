@@ -26,10 +26,26 @@ export class AppController {
     }
   }
 
+
   @Post('migrate-with-mediasoft')
   async migrateMediaSoftProduct() {
     try {
       const data = await this.migrationService.migrateMediaSoftProduct();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('migrate-with-mediasoft-stock')
+  async migrateStockQuantity(@Body() mediaSoftProductStockDto: MediaSoftProductStockDto) {
+    try {
+      const data = await this.migrationService.migrateStockQuantity(mediaSoftProductStockDto);
 
       return {
         success: true,

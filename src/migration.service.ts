@@ -24,13 +24,9 @@ export class MigrationService {
 
   // return media soft products
   async getMediaSoftProductStock(mediaSoftProductStockDto: MediaSoftProductStockDto) {
-    // const apiService = new ApiService();
-    // await apiService.login();
-    // return await apiService.mediaSoftStockApi(mediaSoftProductStockDto);
-
-    const newProducts = await this.saas('product').pluck('name');
-    const oldProducts = await this.gng('portonics_product_translation').whereIn('name', newProducts).pluck('name');
-    return oldProducts.length;
+    const apiService = new ApiService();
+    await apiService.login();
+    return await apiService.mediaSoftStockApi(mediaSoftProductStockDto);
   }
 
   // migrate with new database from media soft product
@@ -95,6 +91,71 @@ export class MigrationService {
     });
 
     return `${products.data.length} products successfully migrated`;
+  }
+
+  // migrate stock quantity
+  async migrateStockQuantity(mediaSoftProductStockDto: MediaSoftProductStockDto) {
+    const stock = await this.getMediaSoftProductStock(mediaSoftProductStockDto);
+
+    if (!stock?.data?.length) {
+      throw new NotFoundException('stock not found');
+    }
+
+    const stockListMap = new Map();
+    stock.data?.forEach(stockItem => {
+      stockItem?.stockList?.forEach(item => {
+        const sku = item?.itemID || 'undefined';
+        if (!stockListMap.has(sku)) {
+          stockListMap.set(sku, [{ ...item, sku }]);
+        } else {
+          const existedItems: any[] = stockListMap.get(sku);
+          existedItems.push({ ...item, sku });
+          stockListMap.set(sku, existedItems);
+        }
+      })
+    });
+
+    const skuProducts = await this.saas('sku').select('id', 'sku');
+    const existedSkuStocks = await this.saas('sku_stock');
+    const existedSkuStocksMap = new Map(existedSkuStocks?.map(stockItem => [stockItem.sku + stockItem.store_code, { stockId: stockItem.id, quantity: stockItem.stock_quantity }]));
+
+    const insertItems = [];
+    const updateItems = [];
+    skuProducts?.forEach(product => {
+      const stockProducts = stockListMap.get(product.sku);
+      if (skuProducts) {
+        stockProducts?.forEach(item => {
+          const stockExist = existedSkuStocksMap.get(item.sku + item.shopID);
+
+          if (stockExist) {
+            if (stockExist.quantity != item.balQty) {
+              updateItems.push({ id: stockExist.stockId, stock_quantity: item.balQty })
+            }
+          } else {
+            insertItems.push({
+              sku_id: product.id,
+              sku: item.sku,
+              store_code: item.shopID,
+              stock_quantity: item.balQty,
+            })
+          }
+        })
+      }
+    })
+
+
+    if (insertItems.length) {
+      await this.saas('sku_stock').insert(insertItems);
+    }
+    if (updateItems.length) {
+      const updated = updateItems.map(async (item) => {
+        return await this.saas('sku_stock').update({ stock_quantity: item.stock_quantity }).where('id', item.id);
+      });
+
+      await Promise.all(updated);
+    }
+    return { updateItems, insertItems };
+    // return [...existedSkuStocksMap]
   }
 
   // migrate with old db sku
