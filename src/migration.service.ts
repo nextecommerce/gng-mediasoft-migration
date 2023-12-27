@@ -241,10 +241,37 @@ export class MigrationService {
       );
     // return oldOrders;
 
-    const newOrders = oldOrders?.map(order => {
-      return {
+
+    // const usersWillCreate = new Map();
+
+    const newOrdersPromise = oldOrders?.map(async (order) => {
+      let userId = order.customer_id;
+
+      if (order.customer_id == 0) {
+        const existedUser = await this.saas('user').where('phone', order.customer_phone).first();
+        if (!existedUser) {
+          const inserted = await this.saas('user').insert({
+            type: 'customer',
+            avatar: null,
+            first_name: order.customer_name,
+            last_name: null,
+            email: order.customer_email,
+            phone: order.customer_phone,
+            gender: null,
+            password: `p${Math.floor(Math.random() * 1000000)}`,
+            status: 'active'
+          });
+          userId = inserted?.[0];
+          console.log(inserted)
+        } else {
+          userId = existedUser.id;
+        }
+
+      }
+
+      return await this.saas('order').insert({
         order_number: order.order_id,
-        user_id: order.customer_id,
+        user_id: userId,
         subtotal: order.amount,
         delivery_charge: order.total_shipping_cost,
         grand_total: order.amount,
@@ -253,13 +280,13 @@ export class MigrationService {
         payment_method: order.payment_method,
         // payment_status: null,
         note: order.order_note,
-        shipping_name: 'null',
-        shipping_phone: 'null',
-        shipping_email: 'null',
-        shipping_country: 'null',
-        shipping_city: 'null',
-        shipping_area: 'null',
-        shipping_street: 'null',
+        shipping_name: order.billing_customer_name || 'null',
+        shipping_phone: order.billing_customer_phone || 'null',
+        shipping_email: order.billing_customer_email || 'null',
+        shipping_country: order.country,
+        shipping_city: order.city,
+        shipping_area: order.post_code + " " + order.area,
+        shipping_street: order.address1,
         shipping_lat: null,
         shipping_lon: null,
         billing_name: order.billing_customer_name || 'null',
@@ -275,15 +302,22 @@ export class MigrationService {
         created_at: order.created_at,
         updated_at: order.updated_at,
         deleted_at: null,
-        shipping_postal_code: 'null',
-        billing_postal_code: 'null',
+        shipping_postal_code: order.post_code,
+        billing_postal_code: order.post_code,
         discount: null,
         offer_id: null,
-      }
+      })
     });
 
-    await this.saas('order').insert(newOrders);
-    return await this.migrateOrderProducts();
+    return await Promise.all(newOrdersPromise);
+    // const existedCustomers = await this.saas('user').whereIn('phone', [...usersWillCreate.values()].map(user => user.phone));
+    // const existedCustomersMap = new Map(existedCustomers.map(customer => [customer.phone, customer.id]));
+
+    // const insertAbleUsers = [...usersWillCreate.values()].filter(user => !existedCustomersMap.get(user.phone));
+
+    // return [...insertAbleUsers];
+    // await this.saas('order').insert(newOrders);
+    // return await this.migrateOrderProducts();
 
     // return "successfully migrated";
   }
@@ -413,6 +447,16 @@ export class MigrationService {
         )
         .where('product_id', product.id);
 
+      const feature = await this.gng('portonics_product_features')
+        .rightJoin(
+          'portonics_feature_translation',
+          'portonics_feature_translation.feature_id',
+          '=',
+          'portonics_product_features.feature_id'
+        )
+        // .select('product_id', 'title', '')
+        .where('product_id', product.id);
+
       const images = await this.gng('portonics_product_images')
         .where('product_id', product.id);
 
@@ -424,6 +468,7 @@ export class MigrationService {
         category_id: category ? category.cat_id : null,
         ...product,
         specification: specification,
+        feature: feature,
         images: images,
         imagesStr: imagesStr || null
       }
@@ -577,6 +622,16 @@ export class MigrationService {
     }
 
     const specification = await this.saas('specification').where('product_id', product.new_db_product_id);
+
+    product.feature?.forEach(async (spec) => {
+      // const isExist = await this.saas('specification').where('product_id', product.new_db_product_id)
+      await this.saas('specification').insert({
+        product_id: product.new_db_product_id,
+        key: spec.title,
+        value: spec.description
+      });
+    })
+
     if (!specification?.length) {
       product.specification?.forEach(async (spec) => {
         // const isExist = await this.saas('specification').where('product_id', product.new_db_product_id)

@@ -6,12 +6,14 @@ import knexConfig from '../knexconfig';
 import gngConfig from '../gngconfig';
 import { MigrationService } from './migration.service';
 import { Cron, ScheduleModule } from '@nestjs/schedule';
+import { CronModule } from './cron.module';
 
 @Module({
   imports: [
     KnexModule.forRoot(knexConfig, 'saas'),
     KnexModule.forRoot(gngConfig, 'gng'),
-    ScheduleModule.forRoot()
+    ScheduleModule.forRoot(),
+    CronModule
   ],
   controllers: [AppController],
   providers: [
@@ -19,9 +21,4 @@ import { Cron, ScheduleModule } from '@nestjs/schedule';
     MigrationService,
   ],
 })
-export class AppModule {
-  @Cron('3 * * * * *')
-  handleCron() {
-    console.log('cron run');
-  }
-}
+export class AppModule { }

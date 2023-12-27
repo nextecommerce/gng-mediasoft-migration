@@ -4,9 +4,10 @@ import { Cron } from '@nestjs/schedule';
 @Injectable()
 export class CronService {
 
-    @Cron('*/1 * * * *') // Cron expression for running every minute
-    runCronJob() {
-        // Your cron job logic goes here
-        console.log('Cron job executed at:', new Date());
-    }
+    // @Cron('* * * * * *') // Cron expression for running every minute
+    // handleCron() {
+    //     // Your cron job logic goes here
+    //     console.log('Cron job executed from service at:', new Date());
+    // }
+    
 }
