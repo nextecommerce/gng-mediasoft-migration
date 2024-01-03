@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Post, Query } from '@nestjs/common';
 import { MigrationService } from './migration.service';
 import { MediaSoftProductDto, MediaSoftProductStockDto } from './dto/mediasoft-product.dto';
 
@@ -21,6 +21,15 @@ export class AppController {
   async getMediaSoftProductStock(@Body() body: MediaSoftProductStockDto) {
     try {
       return await this.migrationService.getMediaSoftProductStock(body);
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Get('product-imei')
+  async getProductIMEIInfoByModelNo(@Query('modelNo') modelNo: number) {
+    try {
+      return await this.migrationService.getProductIMEIInfoByModelNo(modelNo);
     } catch (error) {
       throw new HttpException(error.message, error.status);
     }
@@ -133,6 +142,62 @@ export class AppController {
   async migrateOrderAttributes() {
     try {
       const data = await this.migrationService.migrateOrderProductAttributes();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Get('replace-url-from-description')
+  async replaceStrFromLongText() {
+    try {
+      const data = await this.migrationService.replaceStrFromLongText();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Get('filter-sku')
+  async filterSkuWithOldSkuProduct() {
+    try {
+      const data = await this.migrationService.filterSkuWithOldSkuProduct();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Get('update-color-sku-attribute')
+  async convertToJson() {
+    try {
+      const data = await this.migrationService.convertToJson();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Get('fix-product-title')
+  async changeQuoteFromProduct() {
+    try {
+      const data = await this.migrationService.changeQuoteFromProduct();
 
       return {
         success: true,

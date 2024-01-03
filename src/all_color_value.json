@@ -1,0 +1,3134 @@
+[
+    {
+        "name": "Midnight Blue",
+        "code": "#40485D"
+    },
+    {
+        "name": "Rose Gold",
+        "code": "#b76e79"
+    },
+    {
+        "name": "Space Gray",
+        "code": "#a7adba"
+    },
+    {
+        "name": "Silver (#C0C0C0)",
+        "code": ""
+    },
+    {
+        "name": "Midnight Black",
+        "code": "#1E2126"
+    },
+    {
+        "name": "Light Coral Blue",
+        "code": "#f08080"
+    },
+    {
+        "name": "Lilac Purple",
+        "code": "#b666d2"
+    },
+    {
+        "name": "Coral Blue",
+        "code": "#039BE5"
+    },
+    {
+        "name": "Silver (#f6f6f6)",
+        "code": ""
+    },
+    {
+        "name": "Silver (#f1f1f1)",
+        "code": ""
+    },
+    {
+        "name": "Silver",
+        "code": "#ededed"
+    },
+    {
+        "name": "Gold",
+        "code": "#D8C4AC"
+    },
+    {
+        "name": "Cyan",
+        "code": "#00FFFF"
+    },
+    {
+        "name": "White",
+        "code": "#ffffff"
+    },
+    {
+        "name": "Prestige Gold",
+        "code": "#E9DDB7"
+    },
+    {
+        "name": "Aurora Blue",
+        "code": "#18a0a2"
+    },
+    {
+        "name": "Dark Gray",
+        "code": "#363739"
+    },
+    {
+        "name": "Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Paradise",
+        "code": "",
+        "image": "upload/attribute_value/20180424_1524553282_969597.jpeg"
+    },
+    {
+        "name": "Red",
+        "code": "#FF0000"
+    },
+    {
+        "name": "Pink",
+        "code": "#FDAEC8"
+    },
+    {
+        "name": "Saddle Brown",
+        "code": "#9F5A3D"
+    },
+    {
+        "name": "Taupe",
+        "code": "#8D8078"
+    },
+    {
+        "name": "Smoke Matte",
+        "code": "#60615C"
+    },
+    {
+        "name": "Clear Matte",
+        "code": "#9DADBC"
+    },
+    {
+        "name": "Clear Black",
+        "code": "#828886"
+    },
+    {
+        "name": "Clear",
+        "code": "#CDCCCD"
+    },
+    {
+        "name": "Blue",
+        "code": "#035BBC"
+    },
+    {
+        "name": "Matte Black",
+        "code": "#2D2D2D"
+    },
+    {
+        "name": "Gray",
+        "code": "#666666"
+    },
+    {
+        "name": "Champagne Gold",
+        "code": "#e7d2ac"
+    },
+    {
+        "name": "Gunmetal",
+        "code": "#2C3539"
+    },
+    {
+        "name": "Crystal Clear",
+        "code": "#EBF8FC"
+    },
+    {
+        "name": "Matte Crystal",
+        "code": "#6F7074"
+    },
+    {
+        "name": "Beige",
+        "code": "#C2AE9D"
+    },
+    {
+        "name": "Champagne Crystal",
+        "code": "#F7E7CE"
+    },
+    {
+        "name": "Power Blue",
+        "code": "#1e3f5a"
+    },
+    {
+        "name": "Metal Slate",
+        "code": "#7b9095"
+    },
+    {
+        "name": "Shiny Black",
+        "code": "#2A2A2A"
+    },
+    {
+        "name": "Silver Arctic",
+        "code": "#A6A8AC"
+    },
+    {
+        "name": "Maple Gold",
+        "code": "#e6be8a"
+    },
+    {
+        "name": "Jet Black",
+        "code": "#0a0a0a"
+    },
+    {
+        "name": "Iridescent Diamond",
+        "code": "",
+        "image": "upload/attribute_value/20180524_1527154118_612537.jpeg"
+    },
+    {
+        "name": "Azalea Pink",
+        "code": "#DC3E78"
+    },
+    {
+        "name": "Mint",
+        "code": "#3EB489"
+    },
+    {
+        "name": "Purple",
+        "code": "#800080"
+    },
+    {
+        "name": "Black/Gray",
+        "code": "",
+        "image": "upload/attribute_value/20180531_1527745846_937045.jpeg"
+    },
+    {
+        "name": "Mint/Black",
+        "code": "",
+        "image": "upload/attribute_value/20180531_1527745859_257138.jpeg"
+    },
+    {
+        "name": "Gray/Red",
+        "code": "",
+        "image": "upload/attribute_value/20180531_1527745866_905506.jpeg"
+    },
+    {
+        "name": "Blue/Black",
+        "code": "",
+        "image": "upload/attribute_value/20180531_1527747436_738033.jpeg"
+    },
+    {
+        "name": "Gray/Chrome",
+        "code": "",
+        "image": "upload/attribute_value/20180531_1527755971_859709.jpeg"
+    },
+    {
+        "name": "Pink/Black",
+        "code": "",
+        "image": "upload/attribute_value/20180531_1527755997_835242.jpeg"
+    },
+    {
+        "name": "Red/Black",
+        "code": "",
+        "image": "upload/attribute_value/20180531_1527756050_464561.jpeg"
+    },
+    {
+        "name": "Mint/Gray",
+        "code": "",
+        "image": "upload/attribute_value/20180531_1527756062_631897.jpeg"
+    },
+    {
+        "name": "Lime Gray",
+        "code": "#ABAEC5"
+    },
+    {
+        "name": "Yellow",
+        "code": "#FFFF00"
+    },
+    {
+        "name": "Shock Yellow",
+        "code": "",
+        "image": "upload/attribute_value/20180603_1528017475_949870.jpeg"
+    },
+    {
+        "name": "Copper",
+        "code": "#C48574"
+    },
+    {
+        "name": "Mirror Black",
+        "code": "#3C3C3C"
+    },
+    {
+        "name": "Silver/Black",
+        "code": "",
+        "image": "upload/attribute_value/20180613_1528899616_368460.jpeg"
+    },
+    {
+        "name": "White/Grey",
+        "code": "",
+        "image": "upload/attribute_value/20230626_1687763322_846657.jpeg"
+    },
+    {
+        "name": "Oil Slick",
+        "code": "",
+        "image": "upload/attribute_value/20180624_1529840581_870838.jpeg"
+    },
+    {
+        "name": "Black/Red",
+        "code": "",
+        "image": "upload/attribute_value/20180624_1529841874_973030.jpeg"
+    },
+    {
+        "name": "Lace",
+        "code": "#424242"
+    },
+    {
+        "name": "Mother of Pearl",
+        "code": "",
+        "image": "upload/attribute_value/20180626_1530019934_218997.jpeg"
+    },
+    {
+        "name": "Slate Black",
+        "code": "",
+        "image": "upload/attribute_value/20180701_1530425003_528068.jpeg"
+    },
+    {
+        "name": "Natural",
+        "code": "#C5C8C1"
+    },
+    {
+        "name": "Stone Grey",
+        "code": "#2C3437"
+    },
+    {
+        "name": "Antique White",
+        "code": "#E7DEC5"
+    },
+    {
+        "name": "Teal",
+        "code": "#008080"
+    },
+    {
+        "name": "COTTON CANDY",
+        "code": "",
+        "image": "upload/attribute_value/20180707_1530959693_948632.jpeg"
+    },
+    {
+        "name": "Starry Night",
+        "code": "",
+        "image": "upload/attribute_value/20180707_1530959978_534645.jpeg"
+    },
+    {
+        "name": "ROSE SPARKLES",
+        "code": "",
+        "image": "upload/attribute_value/20180707_1530959666_888843.jpeg"
+    },
+    {
+        "name": "PURE BRILLIANCE",
+        "code": "",
+        "image": "upload/attribute_value/20180707_1530959788_429600.jpeg"
+    },
+    {
+        "name": "ANGEL TEARS",
+        "code": "",
+        "image": "upload/attribute_value/20180707_1530959853_445893.jpeg"
+    },
+    {
+        "name": "Orange",
+        "code": "#FF5E00"
+    },
+    {
+        "name": "Chalk",
+        "code": "#828286",
+        "image": "upload/attribute_value/20180709_1531133248_758948.jpeg"
+    },
+    {
+        "name": "Satin Silver",
+        "code": "#BFC2C7"
+    },
+    {
+        "name": "Infinity White",
+        "code": "#FCFEFC"
+    },
+    {
+        "name": "Iris Purple",
+        "code": "#5E44B4"
+    },
+    {
+        "name": "Ocean Blue",
+        "code": "#1F355E"
+    },
+    {
+        "name": "Metallic Copper",
+        "code": "#DEA68F"
+    },
+    {
+        "name": "Starry Purple",
+        "code": "#582461"
+    },
+    {
+        "name": "Twilight Blue",
+        "code": "#031E63"
+    },
+    {
+        "name": "Sunrise Red",
+        "code": "#ED4F88"
+    },
+    {
+        "name": "Nebula",
+        "code": "#59439B"
+    },
+    {
+        "name": "Sand Stone",
+        "code": "#C8B0A5"
+    },
+    {
+        "name": "Charcoal Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Coral",
+        "code": "#E77B77"
+    },
+    {
+        "name": "Pink Gold",
+        "code": "#F5D9CE"
+    },
+    {
+        "name": "Gray Crimson",
+        "code": "#EEEEEC"
+    },
+    {
+        "name": "Cosmos Blue",
+        "code": "#274255"
+    },
+    {
+        "name": "Anthracite/Black",
+        "code": "",
+        "image": "upload/attribute_value/20181127_1543316544_701404.jpeg"
+    },
+    {
+        "name": "Black/Graphite Aluminium",
+        "code": "",
+        "image": "upload/attribute_value/20181129_1543480525_347702.jpeg"
+    },
+    {
+        "name": "Blue Gray/Rose Gold Aluminium",
+        "code": "",
+        "image": "upload/attribute_value/20181129_1543480576_415676.jpeg"
+    },
+    {
+        "name": "Charcoal Gray",
+        "code": "#4A4D52"
+    },
+    {
+        "name": "Sapphire Blue",
+        "code": "#3B6295"
+    },
+    {
+        "name": "Emerald Green",
+        "code": "#1B5D70"
+    },
+    {
+        "name": "Twilight",
+        "code": "#623AD5"
+    },
+    {
+        "name": "Blue/Sunset",
+        "code": "#394553"
+    },
+    {
+        "name": "Gray/Teal",
+        "code": "#5A5D62"
+    },
+    {
+        "name": "Blue Copper",
+        "code": "#00405F"
+    },
+    {
+        "name": "Blue Silver",
+        "code": "#104C69"
+    },
+    {
+        "name": "Baltic",
+        "code": "#6E716A"
+    },
+    {
+        "name": "Warm Red",
+        "code": "#FF5133"
+    },
+    {
+        "name": "Diamond Blue",
+        "code": "#1A2F88"
+    },
+    {
+        "name": "Diamond Red",
+        "code": "#B91F17"
+    },
+    {
+        "name": "Glaring Gold",
+        "code": "#AF9575"
+    },
+    {
+        "name": "Glaze Blue",
+        "code": "#115868"
+    },
+    {
+        "name": "Starry Black",
+        "code": "#060823"
+    },
+    {
+        "name": "Nebula purple",
+        "code": "#6600FF"
+    },
+    {
+        "name": "Magenta",
+        "code": "#BA292A"
+    },
+    {
+        "name": "Gray/Miami",
+        "code": "#4ABFAD"
+    },
+    {
+        "name": "Clear/Black",
+        "code": "#DCDCDC"
+    },
+    {
+        "name": "Charcoal Sand",
+        "code": "#8E8E8E"
+    },
+    {
+        "name": "Brown",
+        "code": "#734021"
+    },
+    {
+        "name": "Gloss Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Gold/Black",
+        "code": "",
+        "image": "upload/attribute_value/20190127_1548588118_177101.jpeg"
+    },
+    {
+        "name": "Rose Crystal",
+        "code": "#FCE9E3"
+    },
+    {
+        "name": "Aurora Red",
+        "code": "#C01A26"
+    },
+    {
+        "name": "Ditsy Petals Pink",
+        "code": "",
+        "image": "upload/attribute_value/20190205_1549349323_825426.jpeg"
+    },
+    {
+        "name": "Metalic Gradiation",
+        "code": "",
+        "image": "upload/attribute_value/20190205_1549349505_725055.jpeg"
+    },
+    {
+        "name": "Floral Garden",
+        "code": "",
+        "image": "upload/attribute_value/20190206_1549447038_692825.jpeg"
+    },
+    {
+        "name": "Coral Red",
+        "code": "#FF4040"
+    },
+    {
+        "name": "Soft Clear",
+        "code": "#FFFFFF"
+    },
+    {
+        "name": "Navy Blue",
+        "code": "#00387E"
+    },
+    {
+        "name": "Jade Green",
+        "code": "#83AAB0"
+    },
+    {
+        "name": "Radiant Mist",
+        "code": "",
+        "image": "upload/attribute_value/20190223_1550926201_888520.jpeg"
+    },
+    {
+        "name": "Dante Red",
+        "code": "#AE132B"
+    },
+    {
+        "name": "Rose Quartz",
+        "code": "#EBC6CD"
+    },
+    {
+        "name": "Space Quartz",
+        "code": "#BFBBBA"
+    },
+    {
+        "name": "Dark Crystal",
+        "code": "#9C9C9C"
+    },
+    {
+        "name": "Electric Blue",
+        "code": "#120595"
+    },
+    {
+        "name": "Crimson Red",
+        "code": "#DC143C"
+    },
+    {
+        "name": "Shimmery White",
+        "code": "#E3E2E0"
+    },
+    {
+        "name": "Topaz Blue",
+        "code": "#0081FF"
+    },
+    {
+        "name": "Shadow Grey",
+        "code": "#5F5F5D"
+    },
+    {
+        "name": "Moonlight Blue",
+        "code": "#697E92"
+    },
+    {
+        "name": "Horizon Green",
+        "code": "#4E6C6A"
+    },
+    {
+        "name": "Green",
+        "code": "#008000"
+    },
+    {
+        "name": "Graphite Black",
+        "code": "#676767"
+    },
+    {
+        "name": "Prism Black",
+        "code": "#161616"
+    },
+    {
+        "name": "Prism White",
+        "code": "#C6D3DD"
+    },
+    {
+        "name": "Prism Blue",
+        "code": "#3A638A"
+    },
+    {
+        "name": "Amber Brown",
+        "code": "#DDA574"
+    },
+    {
+        "name": "Lunar Red",
+        "code": "#5D0202"
+    },
+    {
+        "name": "Eclipse Black",
+        "code": "#282828"
+    },
+    {
+        "name": "Comet Blue",
+        "code": "#05329B"
+    },
+    {
+        "name": "Space Black",
+        "code": "#17161B"
+    },
+    {
+        "name": "Neptune Blue",
+        "code": "#2653CC"
+    },
+    {
+        "name": "Nebula Red",
+        "code": "#F1204D"
+    },
+    {
+        "name": "Aurora",
+        "code": "#01548F"
+    },
+    {
+        "name": "Breathing Crystal",
+        "code": "#84F2FE"
+    },
+    {
+        "name": "Pearl White",
+        "code": "#EDEDED"
+    },
+    {
+        "name": "Peacock Blue",
+        "code": "#398BC7"
+    },
+    {
+        "name": "Aurora Green",
+        "code": "#094641"
+    },
+    {
+        "name": "Thunder Black",
+        "code": "",
+        "image": "upload/attribute_value/20190423_1556006996_835591.jpeg"
+    },
+    {
+        "name": "Ceramic Black",
+        "code": "#454B54"
+    },
+    {
+        "name": "Pure Platinum",
+        "code": "#D1D2D4"
+    },
+    {
+        "name": "Metallic Blush",
+        "code": "",
+        "image": "upload/attribute_value/20190429_1556519966_433096.jpeg"
+    },
+    {
+        "name": "Fusion Black",
+        "code": "",
+        "image": "upload/attribute_value/20190429_1556531638_992211.jpeg"
+    },
+    {
+        "name": "Sunset Red",
+        "code": "",
+        "image": "upload/attribute_value/20190429_1556531650_654431.jpeg"
+    },
+    {
+        "name": "Leopard",
+        "code": "",
+        "image": "upload/attribute_value/20190430_1556617147_271981.jpeg"
+    },
+    {
+        "name": "Black Dot",
+        "code": "",
+        "image": "upload/attribute_value/20190430_1556617292_221082.jpeg"
+    },
+    {
+        "name": "Sheer Clear",
+        "code": "",
+        "image": "upload/attribute_value/20190430_1556620906_328015.jpeg"
+    },
+    {
+        "name": "Limestone",
+        "code": "#D5C4BA"
+    },
+    {
+        "name": "Glamour Red",
+        "code": "",
+        "image": "upload/attribute_value/20190505_1557051397_273849.jpeg"
+    },
+    {
+        "name": "Fluorite Purple",
+        "code": "",
+        "image": "upload/attribute_value/20190506_1557122683_912911.jpeg"
+    },
+    {
+        "name": "Marble Green",
+        "code": "",
+        "image": "upload/attribute_value/20190506_1557122708_391292.jpeg"
+    },
+    {
+        "name": "Prime Black",
+        "code": "",
+        "image": "upload/attribute_value/20190506_1557131987_281259.jpeg"
+    },
+    {
+        "name": "Elegant Blue",
+        "code": "",
+        "image": "upload/attribute_value/20190506_1557132006_620516.jpeg"
+    },
+    {
+        "name": "Indigo Blue",
+        "code": "",
+        "image": "upload/attribute_value/20190511_1557562882_129430.jpeg"
+    },
+    {
+        "name": "Mystic Purple",
+        "code": "",
+        "image": "upload/attribute_value/20190512_1557651306_367290.jpeg"
+    },
+    {
+        "name": "Mineral Blue",
+        "code": "",
+        "image": "upload/attribute_value/20190512_1557651327_622325.jpeg"
+    },
+    {
+        "name": "Neon Blue & Neon Red",
+        "code": "",
+        "image": "upload/attribute_value/20190515_1557896571_327929.jpeg"
+    },
+    {
+        "name": "Bold Red",
+        "code": "#d72d30"
+    },
+    {
+        "name": "Black Sea",
+        "code": "#333333"
+    },
+    {
+        "name": "White/Black",
+        "code": "",
+        "image": "upload/attribute_value/20190525_1558767043_928154.jpeg"
+    },
+    {
+        "name": "Black/Tan",
+        "code": "",
+        "image": "upload/attribute_value/20190525_1558771133_990304.jpeg"
+    },
+    {
+        "name": "Nebula Blue",
+        "code": "",
+        "image": "upload/attribute_value/20190615_1560581046_505753.jpeg"
+    },
+    {
+        "name": "Mirror Grey",
+        "code": "",
+        "image": "upload/attribute_value/20190615_1560581061_547806.jpeg"
+    },
+    {
+        "name": "Almond",
+        "code": "",
+        "image": "upload/attribute_value/20190615_1560581073_710656.jpeg"
+    },
+    {
+        "name": "Aqua Blue",
+        "code": "",
+        "image": "upload/attribute_value/20190617_1560774468_768419.jpeg"
+    },
+    {
+        "name": "Burgundy Red",
+        "code": "",
+        "image": "upload/attribute_value/20190617_1560774494_360602.jpeg"
+    },
+    {
+        "name": "Gradient Blue",
+        "code": "",
+        "image": "upload/attribute_value/20190619_1560943860_151218.jpeg"
+    },
+    {
+        "name": "Heather Gray",
+        "code": "#717274"
+    },
+    {
+        "name": "Diamond Black",
+        "code": "#0E0C0C"
+    },
+    {
+        "name": "Seawater blue",
+        "code": "#9CE1DE"
+    },
+    {
+        "name": "More than White",
+        "code": "",
+        "image": "upload/attribute_value/20190912_1568272376_231605.jpeg"
+    },
+    {
+        "name": "Not just Blue",
+        "code": "",
+        "image": "upload/attribute_value/20190912_1568272386_887391.jpeg"
+    },
+    {
+        "name": "Kind of Grey",
+        "code": "",
+        "image": "upload/attribute_value/20190912_1568272395_633183.jpeg"
+    },
+    {
+        "name": "Phantom Black",
+        "code": "",
+        "image": "upload/attribute_value/20190914_1568435121_410697.png"
+    },
+    {
+        "name": "Angel Gold",
+        "code": "",
+        "image": "upload/attribute_value/20190914_1568435133_186971.png"
+    },
+    {
+        "name": "Ghost White",
+        "code": "",
+        "image": "upload/attribute_value/20190914_1568435145_497794.png"
+    },
+    {
+        "name": "Aluminium Alloy",
+        "code": "#3a3a3a"
+    },
+    {
+        "name": "Stainless Steel",
+        "code": "#F1F1F1"
+    },
+    {
+        "name": "Midsummer Purple",
+        "code": "#4b06aa"
+    },
+    {
+        "name": "Crush Blue",
+        "code": "#0099ff"
+    },
+    {
+        "name": "Dazzling White",
+        "code": "#FFE0E0"
+    },
+    {
+        "name": "Skyline Blue",
+        "code": "#00ACFF"
+    },
+    {
+        "name": "Glacier Ice",
+        "code": "#b1c1ce"
+    },
+    {
+        "name": "Midnight Ocean",
+        "code": "#7b8993"
+    },
+    {
+        "name": "Prism crush violet",
+        "code": "#7205a7"
+    },
+    {
+        "name": "Prism crush black",
+        "code": "#040301"
+    },
+    {
+        "name": "Prism crush white",
+        "code": "#ffffff"
+    },
+    {
+        "name": "Carbon Black",
+        "code": "#232325"
+    },
+    {
+        "name": "Agate Red",
+        "code": "#990000"
+    },
+    {
+        "name": "Luscious",
+        "code": "#FFBFC5"
+    },
+    {
+        "name": "Ruby Red",
+        "code": "#9e0505"
+    },
+    {
+        "name": "Onyx Black",
+        "code": "#1b1e1f"
+    },
+    {
+        "name": "Aura glow",
+        "code": "#aaadae"
+    },
+    {
+        "name": "Crystal Black",
+        "code": "#1D2A37"
+    },
+    {
+        "name": "Moonlight White",
+        "code": "",
+        "image": "upload/attribute_value/20191113_1573638913_568355.jpeg"
+    },
+    {
+        "name": "Mineral Grey",
+        "code": "",
+        "image": "upload/attribute_value/20191113_1573638936_979169.jpeg"
+    },
+    {
+        "name": "Forest Green",
+        "code": "",
+        "image": "upload/attribute_value/20191113_1573638945_939689.jpeg"
+    },
+    {
+        "name": "Denim Blue",
+        "code": "#343D62"
+    },
+    {
+        "name": "Gris",
+        "code": "#2a3439"
+    },
+    {
+        "name": "Midnight Green",
+        "code": "",
+        "image": "upload/attribute_value/20191116_1573882757_239404.jpeg"
+    },
+    {
+        "name": "Magnetic Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Spring White",
+        "code": "#CCFFFF"
+    },
+    {
+        "name": "Storm Metallic",
+        "code": "",
+        "image": "upload/attribute_value/20191202_1575264266_602709.jpeg"
+    },
+    {
+        "name": "Black Metallic",
+        "code": "",
+        "image": "upload/attribute_value/20191202_1575264284_334988.jpeg"
+    },
+    {
+        "name": "Pebble Brown",
+        "code": "",
+        "image": "upload/attribute_value/20191205_1575537559_778586.jpeg"
+    },
+    {
+        "name": "Amber Sunrise",
+        "code": "#FF4C28"
+    },
+    {
+        "name": "Frosted Silver",
+        "code": "",
+        "image": "upload/attribute_value/20191207_1575698952_424011.jpeg"
+    },
+    {
+        "name": "Glacier Blue",
+        "code": "",
+        "image": "upload/attribute_value/20191207_1575698965_628598.jpeg"
+    },
+    {
+        "name": "Space Crystal",
+        "code": "#9c9c9c"
+    },
+    {
+        "name": "Opal black",
+        "code": "#000000"
+    },
+    {
+        "name": "Lake Cyan",
+        "code": "#729797"
+    },
+    {
+        "name": "Sunset Orange",
+        "code": "#ff693a"
+    },
+    {
+        "name": "Mystic Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Jazzy Blue",
+        "code": "#3300FF"
+    },
+    {
+        "name": "Vanila Mint",
+        "code": "",
+        "image": "upload/attribute_value/20200108_1578480742_556226.png"
+    },
+    {
+        "name": "Space purple",
+        "code": "",
+        "image": "upload/attribute_value/20200108_1578480756_976608.png"
+    },
+    {
+        "name": "Marine Green",
+        "code": "",
+        "image": "upload/attribute_value/20200108_1578480769_737671.png"
+    },
+    {
+        "name": "Slate Gray",
+        "code": "",
+        "image": "upload/attribute_value/20200113_1578899397_352682.png"
+    },
+    {
+        "name": "Military Green",
+        "code": "#525b52"
+    },
+    {
+        "name": "Haze Blue",
+        "code": "",
+        "image": "upload/attribute_value/20200121_1579605418_201052.png"
+    },
+    {
+        "name": "Aura black",
+        "code": "#3C3C3E"
+    },
+    {
+        "name": "Orchid Blue",
+        "code": "#2B4C8F"
+    },
+    {
+        "name": "Cosmic Gray",
+        "code": "",
+        "image": "upload/attribute_value/20200219_1582110412_678075.jpeg"
+    },
+    {
+        "name": "Cloud Blue",
+        "code": "",
+        "image": "upload/attribute_value/20200219_1582110285_732416.jpeg"
+    },
+    {
+        "name": "Cosmic Black",
+        "code": "",
+        "image": "upload/attribute_value/20200219_1582110361_351894.jpeg"
+    },
+    {
+        "name": "Sea Blue",
+        "code": "#1E83DB"
+    },
+    {
+        "name": "Sky White",
+        "code": "#E8E9E8"
+    },
+    {
+        "name": "Lightening Black",
+        "code": "#425065"
+    },
+    {
+        "name": "Unicorn White",
+        "code": "#BFDEEE"
+    },
+    {
+        "name": "Forest",
+        "code": "#D7C1A9"
+    },
+    {
+        "name": "Space Silver",
+        "code": "#acb3d4"
+    },
+    {
+        "name": "Prism Crush Silver",
+        "code": "#dbdbdb"
+    },
+    {
+        "name": "Squad",
+        "code": "",
+        "image": "upload/attribute_value/20200313_1584084562_914124.jpeg"
+    },
+    {
+        "name": "Ultraviolet",
+        "code": "",
+        "image": "upload/attribute_value/20200314_1584172097_345374.png"
+    },
+    {
+        "name": "Rock Black",
+        "code": "#434343"
+    },
+    {
+        "name": "Violet",
+        "code": "#6139C9"
+    },
+    {
+        "name": "Space Station",
+        "code": "",
+        "image": "upload/attribute_value/20200321_1584770040_156111.jpeg"
+    },
+    {
+        "name": "Plum",
+        "code": "",
+        "image": "upload/attribute_value/20200321_1584772579_430540.png"
+    },
+    {
+        "name": "Transparent",
+        "code": "#F2F6F8"
+    },
+    {
+        "name": "Transparent Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Midnight Grey",
+        "code": "#64657e"
+    },
+    {
+        "name": "Frozen Blue",
+        "code": "",
+        "image": "upload/attribute_value/20200517_1589729625_789406.jpeg"
+    },
+    {
+        "name": "Blazing Red",
+        "code": "",
+        "image": "upload/attribute_value/20200517_1589729639_587825.jpeg"
+    },
+    {
+        "name": "Gleam Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Sleek Silver",
+        "code": "#99ACFF"
+    },
+    {
+        "name": "Auroral Blue",
+        "code": "",
+        "image": "upload/attribute_value/20200607_1591519872_299447.jpeg"
+    },
+    {
+        "name": "Cream",
+        "code": "",
+        "image": "upload/attribute_value/20200614_1592111181_791778.png"
+    },
+    {
+        "name": "Interstellar Grey",
+        "code": "",
+        "image": "upload/attribute_value/20200614_1592114620_126972.jpeg"
+    },
+    {
+        "name": "Tropical Green",
+        "code": "",
+        "image": "upload/attribute_value/20200615_1592204737_597263.jpeg"
+    },
+    {
+        "name": "Glacier White",
+        "code": "",
+        "image": "upload/attribute_value/20200615_1592204891_344364.jpeg"
+    },
+    {
+        "name": "Fantasy White",
+        "code": "",
+        "image": "upload/attribute_value/20200617_1592365223_856875.jpeg"
+    },
+    {
+        "name": "Mystery Black",
+        "code": "",
+        "image": "upload/attribute_value/20200617_1592365227_851552.jpeg"
+    },
+    {
+        "name": "Irish Blue",
+        "code": "#9981FF"
+    },
+    {
+        "name": "Sky Blue",
+        "code": "#14b1fc"
+    },
+    {
+        "name": "Blush Pink",
+        "code": "#FE828C"
+    },
+    {
+        "name": "Green Tea",
+        "code": "",
+        "image": "upload/attribute_value/20200623_1592911265_558457.png"
+    },
+    {
+        "name": "Crush Green",
+        "code": "#275747"
+    },
+    {
+        "name": "Sakura Pink",
+        "code": "#f4bdee"
+    },
+    {
+        "name": "Prism Crush Blue",
+        "code": "#2359a8"
+    },
+    {
+        "name": "Emerald Black",
+        "code": "#002B00"
+    },
+    {
+        "name": "Moonstone White",
+        "code": "#CCFFFF"
+    },
+    {
+        "name": "Carbon Grey",
+        "code": "#5B5B5B"
+    },
+    {
+        "name": "Sunset Purple",
+        "code": "#9F8BE1"
+    },
+    {
+        "name": "Ocean Green",
+        "code": "#44C1C0"
+    },
+    {
+        "name": "Aurora Purple",
+        "code": "#8C55A8"
+    },
+    {
+        "name": "Twilight Black",
+        "code": "#010101"
+    },
+    {
+        "name": "Citron",
+        "code": "#d9d957"
+    },
+    {
+        "name": "Army Green",
+        "code": "#565e41"
+    },
+    {
+        "name": "Stream White",
+        "code": "#CFEBE7"
+    },
+    {
+        "name": "Peacock Green",
+        "code": "#40B8B9"
+    },
+    {
+        "name": "Granite Grey",
+        "code": "#5B5B5B"
+    },
+    {
+        "name": "Lava Red",
+        "code": "#943131"
+    },
+    {
+        "name": "Mint Green",
+        "code": "#9ea88d"
+    },
+    {
+        "name": "Comet White",
+        "code": "#D2E3F5"
+    },
+    {
+        "name": "Pepper Grey",
+        "code": "#929190"
+    },
+    {
+        "name": "Aqua Green",
+        "code": "#01997B"
+    },
+    {
+        "name": "Navy",
+        "code": "#40485D"
+    },
+    {
+        "name": "Mystic Grey",
+        "code": "#5F5F5F"
+    },
+    {
+        "name": "Mystic Green",
+        "code": "#7E9B89"
+    },
+    {
+        "name": "Mystic Bronze",
+        "code": "#A77F77"
+    },
+    {
+        "name": "Galactic Blue",
+        "code": "",
+        "image": "upload/attribute_value/20200813_1597293425_323296.png"
+    },
+    {
+        "name": "Mystic Silver",
+        "code": "#c1c2c4"
+    },
+    {
+        "name": "Pebble Grey",
+        "code": "",
+        "image": "upload/attribute_value/20200901_1598943934_339243.png"
+    },
+    {
+        "name": "Ultramarine Blue",
+        "code": "",
+        "image": "upload/attribute_value/20200904_1599197802_127960.jpeg"
+    },
+    {
+        "name": "Glacial Green",
+        "code": "",
+        "image": "upload/attribute_value/20200904_1599197813_609726.jpeg"
+    },
+    {
+        "name": "Sunrise Orange",
+        "code": "",
+        "image": "upload/attribute_value/20200904_1599214182_284974.png"
+    },
+    {
+        "name": "Mystic White",
+        "code": "#ffffff"
+    },
+    {
+        "name": "Jet White",
+        "code": "#ffffff"
+    },
+    {
+        "name": "Blue Marble",
+        "code": "#00b2d2"
+    },
+    {
+        "name": "Gray Onyx",
+        "code": "#4e4e4e"
+    },
+    {
+        "name": "Quite Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Quite Yellow",
+        "code": "#FBBD0F"
+    },
+    {
+        "name": "Quite White",
+        "code": "#EFEFEF"
+    },
+    {
+        "name": "Magic Blue",
+        "code": "",
+        "image": "upload/attribute_value/20200910_1599718055_679255.png"
+    },
+    {
+        "name": "Obsidian Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Lake Green",
+        "code": "",
+        "image": "upload/attribute_value/20200923_1600841651_102956.png"
+    },
+    {
+        "name": "Deepsea Blue",
+        "code": "#27304d"
+    },
+    {
+        "name": "Dynamic Orange",
+        "code": "",
+        "image": "upload/attribute_value/20201008_1602133595_446333.png"
+    },
+    {
+        "name": "Sunset Melody",
+        "code": "#3356FF"
+    },
+    {
+        "name": "Midnight Jazz",
+        "code": "#000000"
+    },
+    {
+        "name": "Mirror Blue",
+        "code": "",
+        "image": "upload/attribute_value/20201014_1602652223_368659.png"
+    },
+    {
+        "name": "Mirror Silver",
+        "code": "",
+        "image": "upload/attribute_value/20201014_1602652233_958863.png"
+    },
+    {
+        "name": "Grey",
+        "code": "#808080"
+    },
+    {
+        "name": "Polar Blue",
+        "code": "",
+        "image": "upload/attribute_value/20201015_1602751562_736041.png"
+    },
+    {
+        "name": "Baltic Blue",
+        "code": "",
+        "image": "upload/attribute_value/20201023_1603439276_917022.jpeg"
+    },
+    {
+        "name": "Triple Black",
+        "code": "",
+        "image": "upload/attribute_value/20201023_1603439358_670117.jpeg"
+    },
+    {
+        "name": "Mint Cream",
+        "code": "#CDEEE5"
+    },
+    {
+        "name": "Moonlight Black",
+        "code": "#25282E"
+    },
+    {
+        "name": "Cloud Navy",
+        "code": "#485167"
+    },
+    {
+        "name": "Cloud Lavender",
+        "code": "#D1B6CC"
+    },
+    {
+        "name": "Cloud Mint",
+        "code": "#A6C2BB"
+    },
+    {
+        "name": "Cloud Red",
+        "code": "#B73438"
+    },
+    {
+        "name": "Cloud White",
+        "code": "#F0F0F1"
+    },
+    {
+        "name": "Cloud Orange",
+        "code": "#FAC69D"
+    },
+    {
+        "name": "Gravity Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Oxygen Blue",
+        "code": "#CCFFFF"
+    },
+    {
+        "name": "Deep Navy",
+        "code": "#484E5E"
+    },
+    {
+        "name": "Pink Citrus",
+        "code": "#FF6B61"
+    },
+    {
+        "name": "Power Silver",
+        "code": "#D0D7E2"
+    },
+    {
+        "name": "Lime Green",
+        "code": "#048C98"
+    },
+    {
+        "name": "Arctic Blue",
+        "code": "#0254AD"
+    },
+    {
+        "name": "Brick Red",
+        "code": "#B23025"
+    },
+    {
+        "name": "Slate Blue",
+        "code": "#406F8E"
+    },
+    {
+        "name": "Celestial Black",
+        "code": "#000000"
+    },
+    {
+        "name": "Crystal Quartz",
+        "code": "",
+        "image": "upload/attribute_value/20201127_1606459796_652157.jpeg"
+    },
+    {
+        "name": "Pitch Black",
+        "code": "",
+        "image": "upload/attribute_value/20201130_1606718952_120088.jpeg"
+    },
+    {
+        "name": "Sports Edition",
+        "code": "#000000"
+    },
+    {
+        "name": "Classic Edition",
+        "code": "#EEEEEE"
+    },
+    {
+        "name": "Graphite",
+        "code": "#5B5A56"
+    },
+    {
+        "name": "Pacific Blue",
+        "code": "#3F5C6A"
+    },
+    {
+        "name": "Shadow Black",
+        "code": "#565D67"
+    },
+    {
+        "name": "Elevated Olive",
+        "code": "#545835"
+    },
+    {
+        "name": "Blue Blade",
+        "code": "#ADD9F7"
+    },
+    {
+        "name": "Silver Sword",
+        "code": "#A2A9B4"
+    },
+    {
+        "name": "Fancy Blue",
+        "code": "#3581A2"
+    },
+    {
+        "name": "Power Black",
+        "code": "#2A2D31"
+    },
+    {
+        "name": "Mystery Blue",
+        "code": "#6695AC"
+    },
+    {
+        "name": "Dynamic Black",
+        "code": "#21252F"
+    },
+    {
+        "name": "POCO Yellow",
+        "code": "#FFD24D"
+    },
+    {
+        "name": "Cool Blue",
+        "code": "#505998"
+    },
+    {
+        "name": "Fantasy Silver",
+        "code": "#A6D6F4"
+    },
+    {
+        "name": "Midnight Ice",
+        "code": "#283349"
+    },
+    {
+        "name": "Triple Midnight",
+        "code": "#28374E"
+    },
+    {
+        "name": "Phantom Silver",
+        "code": "#C2C9D5"
+    },
+    {
+        "name": "Royal Blue",
+        "code": "",
+        "image": "upload/attribute_value/20210126_1611640401_461587.png"
+    },
+    {
+        "name": "Smoke Gray",
+        "code": "#DEDFE1"
+    },
+    {
+        "name": "Misty Blue",
+        "code": "#132857"
+    },
+    {
+        "name": "Crystal Symphony",
+        "code": "#66ACAC"
+    },
+    {
+        "name": "Titanium Sapphire",
+        "code": "#002B81"
+    },
+    {
+        "name": "Light Grey",
+        "code": "#D6D8DD"
+    },
+    {
+        "name": "Green and Greener",
+        "code": "#71C7A6"
+    },
+    {
+        "name": "Arctic White",
+        "code": "#D7EAF0"
+    },
+    {
+        "name": "Black Titanium",
+        "code": "#4B4A48"
+    },
+    {
+        "name": "Fancy White",
+        "code": "#D6DCE0"
+    },
+    {
+        "name": "Purist Blue",
+        "code": "#00ACFF"
+    },
+    {
+        "name": "Tranquil Blue",
+        "code": "#0299C4"
+    },
+    {
+        "name": "Moonlight Jade",
+        "code": "",
+        "image": "upload/attribute_value/20210303_1614773035_707473.jpeg"
+    },
+    {
+        "name": "Ocean Wave",
+        "code": "",
+        "image": "upload/attribute_value/20210303_1614773060_149759.jpeg"
+    },
+    {
+        "name": "Quetzal Cyan",
+        "code": "",
+        "image": "upload/attribute_value/20210303_1614773115_340628.jpeg"
+    },
+    {
+        "name": "Fantastic Purple",
+        "code": "#81A6D4"
+    },
+    {
+        "name": "Fluid Black",
+        "code": "#8C8D8F"
+    },
+    {
+        "name": "Carbon Gray",
+        "code": "#565656"
+    },
+    {
+        "name": "Olive Black",
+        "code": "#002B00"
+    },
+    {
+        "name": "Mighty Black",
+        "code": "#3B3B3B"
+    },
+    {
+        "name": "Blazing Blue",
+        "code": "#627ECD"
+    },
+    {
+        "name": "Electric Green",
+        "code": "#25C3B4"
+    },
+    {
+        "name": "Laser Black",
+        "code": "",
+        "image": "upload/attribute_value/20210323_1616496377_382572.png"
+    },
+    {
+        "name": "Laser Blue",
+        "code": "",
+        "image": "upload/attribute_value/20210323_1616496048_421409.png"
+    },
+    {
+        "name": "Frost White",
+        "code": "#E4E4E6"
+    },
+    {
+        "name": "Onyx Gray",
+        "code": "#8A8B90"
+    },
+    {
+        "name": "Awesome Black",
+        "code": "#232323"
+    },
+    {
+        "name": "Awesome Blue",
+        "code": "#67BAE0"
+    },
+    {
+        "name": "Awesome White",
+        "code": "#EEEDE6"
+    },
+    {
+        "name": "Awesome Violet",
+        "code": "#BAB7D8"
+    },
+    {
+        "name": "Infinite Blue",
+        "code": "#71C8F7"
+    },
+    {
+        "name": "Infinite Black",
+        "code": "#7B818B"
+    },
+    {
+        "name": "Cross Blue",
+        "code": "#88D5E3"
+    },
+    {
+        "name": "Cross Black",
+        "code": "#242830"
+    },
+    {
+        "name": "Chill Gray",
+        "code": "#7D8A92"
+    },
+    {
+        "name": "True Black",
+        "code": "#212226"
+    },
+    {
+        "name": "7Â° purple",
+        "code": "#d2c3e1"
+    },
+    {
+        "name": "Aegean Blue",
+        "code": "#115276"
+    },
+    {
+        "name": "Morandi Green",
+        "code": "#A8FFF3"
+    },
+    {
+        "name": "Nebula Gray",
+        "code": "#726962"
+    },
+    {
+        "name": "Silver Frost",
+        "code": "#909398"
+    },
+    {
+        "name": "Fiery Red",
+        "code": "#EF6538"
+    },
+    {
+        "name": "Blue/Pink",
+        "code": "",
+        "image": "upload/attribute_value/20210415_1618484705_513793.jpeg"
+    },
+    {
+        "name": "Water Grey",
+        "code": "",
+        "image": "upload/attribute_value/20210427_1619500166_335990.jpeg"
+    },
+    {
+        "name": "Water Blue",
+        "code": "",
+        "image": "upload/attribute_value/20210427_1619500176_212429.jpeg"
+    },
+    {
+        "name": "Cyber Silver",
+        "code": "#D6E1E8"
+    },
+    {
+        "name": "Cyber Black",
+        "code": "#575757"
+    },
+    {
+        "name": "Lake Blue",
+        "code": "#4B94C9"
+    },
+    {
+        "name": "Dark Night",
+        "code": "",
+        "image": "upload/attribute_value/20210511_1620710583_973944.jpeg"
+    },
+    {
+        "name": "Glacial Blue",
+        "code": "",
+        "image": "upload/attribute_value/20210511_1620710592_960758.jpeg"
+    },
+    {
+        "name": "Illuminating Yellow",
+        "code": "#F4F24A"
+    },
+    {
+        "name": "Dusk Blue",
+        "code": "#2D4397"
+    },
+    {
+        "name": "Sunset Dazzle",
+        "code": "#788EEB"
+    },
+    {
+        "name": "Vintage Bronze",
+        "code": "#EEAA84"
+    },
+    {
+        "name": "Metallic Blue",
+        "code": "#5C75A2"
+    },
+    {
+        "name": "Aurora Grey",
+        "code": "#59505E"
+    },
+    {
+        "name": "Breeze Blue",
+        "code": "#739AB6"
+    },
+    {
+        "name": "Roman Black",
+        "code": "#3C3C3E"
+    },
+    {
+        "name": "Dimond Flare",
+        "code": "#A1A9F2"
+    },
+    {
+        "name": "Flamingo Pink",
+        "code": "#F7D7DA",
+        "image": "upload/attribute_value/20210712_1626072717_906126.png"
+    },
+    {
+        "name": "Sage Green",
+        "code": "#73918C",
+        "image": "upload/attribute_value/20210712_1626072608_323513.png"
+    },
+    {
+        "name": "Sage Green",
+        "code": "#73918C"
+    },
+    {
+        "name": "Flamingo Pink",
+        "code": "#F7D7DA"
+    },
+    {
+        "name": "Meteorite Black",
+        "code": "#333333"
+    },
+    {
+        "name": "Steel Blue",
+        "code": "#2e464e"
+    },
+    {
+        "name": "Desert Grey",
+        "code": "#8D8A7F"
+    },
+    {
+        "name": "Plantinum Grey",
+        "code": "#CECECE"
+    },
+    {
+        "name": "Iron Grey",
+        "code": "#6F6F6F"
+    },
+    {
+        "name": "Celestial Silver",
+        "code": "#BFDDF5"
+    },
+    {
+        "name": "Lunar White",
+        "code": "#E8EAE9"
+    },
+    {
+        "name": "Electric Black",
+        "code": "#202227"
+    },
+    {
+        "name": "Vinyl Black",
+        "code": "#100F18"
+    },
+    {
+        "name": "Sporty Orange",
+        "code": "#F85D19"
+    },
+    {
+        "name": "Fantastic Rainbow",
+        "code": "",
+        "image": "upload/attribute_value/20210805_1628154470_386424.png"
+    },
+    {
+        "name": "Matte Clear",
+        "code": "#BABDBF"
+    },
+    {
+        "name": "Light Green",
+        "code": "#CEE0D1"
+    },
+    {
+        "name": "Light Violate",
+        "code": "#B9BAD4"
+    },
+    {
+        "name": "Mostly Blue",
+        "code": "#2E6AD6"
+    },
+    {
+        "name": "Greyish Black",
+        "code": "#4D4E4F"
+    },
+    {
+        "name": "GREEN_",
+        "code": "#a4d9c5",
+        "image": "upload/attribute_value/20210817_1629181037_539050.jpeg"
+    },
+    {
+        "name": "Midnight Forest",
+        "code": "#6B7889"
+    },
+    {
+        "name": "Forest Blue",
+        "code": "#6FA8F6"
+    },
+    {
+        "name": "Racing Blue",
+        "code": "#03B5FE"
+    },
+    {
+        "name": "Racing Silver",
+        "code": "#B3BCD8"
+    },
+    {
+        "name": "Supersonic Blue",
+        "code": "#A2CAE4"
+    },
+    {
+        "name": "Supersonic Black",
+        "code": "#3D4452"
+    },
+    {
+        "name": "Phantom Green",
+        "code": "#505853"
+    },
+    {
+        "name": "Pearl Blue",
+        "code": "#7BA7CB"
+    },
+    {
+        "name": "Starry Blue",
+        "code": "#369DD3"
+    },
+    {
+        "name": "Black/Green",
+        "code": "",
+        "image": "upload/attribute_value/20210907_1631012857_202119.png"
+    },
+    {
+        "name": "Lavendar",
+        "code": "",
+        "image": "upload/attribute_value/20210909_1631182035_341024.png"
+    },
+    {
+        "name": "Olive",
+        "code": "#808000",
+        "image": "upload/attribute_value/20220105_1641368026_618737.jpeg"
+    },
+    {
+        "name": "Frosted Champangane",
+        "code": "#3D4354"
+    },
+    {
+        "name": "Dynamic Grey",
+        "code": "#7E7C78"
+    },
+    {
+        "name": "Phantom Purple",
+        "code": "#411B60"
+    },
+    {
+        "name": "Diamond Glow",
+        "code": "#CCFFFF"
+    },
+    {
+        "name": "Charcoal Ink",
+        "code": "#23282E"
+    },
+    {
+        "name": "Flower Garden",
+        "code": "",
+        "image": "upload/attribute_value/20210922_1632304903_102092.png"
+    },
+    {
+        "name": "Frost Black",
+        "code": "#757575"
+    },
+    {
+        "name": "Interstellar Glow",
+        "code": "#D5C6E3"
+    },
+    {
+        "name": "Golden Brown",
+        "code": "#D18758"
+    },
+    {
+        "name": "Midnight",
+        "code": "#4C4D4F"
+    },
+    {
+        "name": "Dark Cherry",
+        "code": "#5B4551"
+    },
+    {
+        "name": "Sequoia Green",
+        "code": "#465246"
+    },
+    {
+        "name": "Wisteria",
+        "code": "#85829D"
+    },
+    {
+        "name": "Marigold",
+        "code": "#FFAA74"
+    },
+    {
+        "name": "Abyss Blue",
+        "code": "#4D5965"
+    },
+    {
+        "name": "Blue Jay",
+        "code": "#55788C"
+    },
+    {
+        "name": "Voyager Grey",
+        "code": "#989BA4"
+    },
+    {
+        "name": "Gray Sierra",
+        "code": "#889198"
+    },
+    {
+        "name": "Cool Grey",
+        "code": "#989696"
+    },
+    {
+        "name": "Lunar Silver",
+        "code": "#999FA3"
+    },
+    {
+        "name": "Aquamerin Green",
+        "code": "#65CDC4"
+    },
+    {
+        "name": "Aurora Dawn",
+        "code": "",
+        "image": "upload/attribute_value/20211005_1633413571_313658.png"
+    },
+    {
+        "name": "Daybreak Blue",
+        "code": "#CBCFEF"
+    },
+    {
+        "name": "Pro Flex",
+        "code": "#fafafa"
+    },
+    {
+        "name": "Pebble White",
+        "code": "#DADBE0"
+    },
+    {
+        "name": "Red Floral",
+        "code": "",
+        "image": "upload/attribute_value/20211009_1633763683_578606.png"
+    },
+    {
+        "name": "Metalic Silver",
+        "code": "#C0C0C0"
+    },
+    {
+        "name": "Dark Nebula",
+        "code": "#3F2971"
+    },
+    {
+        "name": "Ivory",
+        "code": "#E2DACD"
+    },
+    {
+        "name": "Cosmic Purple",
+        "code": "#B16AF8"
+    },
+    {
+        "name": "Terra Rosa",
+        "code": "#A98778"
+    },
+    {
+        "name": "Ivory White",
+        "code": "#D3C4B5"
+    },
+    {
+        "name": "Moonlight Grey",
+        "code": "#C1B4A4"
+    },
+    {
+        "name": "Sierra Blue",
+        "code": "#A9C4DF"
+    },
+    {
+        "name": "Matte Grey",
+        "code": "#4F4F4F"
+    },
+    {
+        "name": "Starlight",
+        "code": "#FAF7F2"
+    },
+    {
+        "name": "Charocal",
+        "code": "#50545A"
+    },
+    {
+        "name": "White Daisy",
+        "code": "",
+        "image": "upload/attribute_value/20211024_1635072457_367037.png"
+    },
+    {
+        "name": "Granite Gray",
+        "code": "#353B3E"
+    },
+    {
+        "name": "Sand Beige",
+        "code": "#F6E6C9"
+    },
+    {
+        "name": "Sunset White",
+        "code": "#FFFFFF"
+    },
+    {
+        "name": "Blue/Coral",
+        "code": "",
+        "image": "upload/attribute_value/20211104_1636019819_625611.png"
+    },
+    {
+        "name": "Metal Grey",
+        "code": "#43443E"
+    },
+    {
+        "name": "Neo Green",
+        "code": "#DAF685"
+    },
+    {
+        "name": "Bubblegum Blue",
+        "code": "#ADB9DF"
+    },
+    {
+        "name": "Peach Pink",
+        "code": "#F1C2B5"
+    },
+    {
+        "name": "Truffle Black",
+        "code": "#646571"
+    },
+    {
+        "name": "Chalk Pink",
+        "code": "#F6D7D2"
+    },
+    {
+        "name": "Bifrost Blue",
+        "code": "#7EA0BF"
+    },
+    {
+        "name": "Astral White",
+        "code": "#DADADA"
+    },
+    {
+        "name": "Dusk",
+        "code": "#55565A"
+    },
+    {
+        "name": "Paper Touch",
+        "code": "#f4f4ec"
+    },
+    {
+        "name": "Glowing Rainbow Silver",
+        "code": "#E5D8E8"
+    },
+    {
+        "name": "Mystic Blue",
+        "code": "#30425A"
+    },
+    {
+        "name": "Wave Green",
+        "code": "#5EB5C9"
+    },
+    {
+        "name": "Celestial Blue",
+        "code": "#96B5F2"
+    },
+    {
+        "name": "Meteorite Gray",
+        "code": "#4C4E55"
+    },
+    {
+        "name": "Metallic Purple",
+        "code": "#7177A1"
+    },
+    {
+        "name": "Coral Green",
+        "code": "#0C7681"
+    },
+    {
+        "name": "Lavender",
+        "code": "#E6E6FA",
+        "image": "upload/attribute_value/20220105_1641368067_845220.jpeg"
+    },
+    {
+        "name": "Athens Gray",
+        "code": "#9ca0ad"
+    },
+    {
+        "name": "Sunshine Gold",
+        "code": "#e4bc3f"
+    },
+    {
+        "name": "Stardust Black",
+        "code": "#3B3E46"
+    },
+    {
+        "name": "Clover",
+        "code": "#39993A"
+    },
+    {
+        "name": "Fleur",
+        "code": "#DCDDD8"
+    },
+    {
+        "name": "sakura",
+        "code": "#fcc9b9"
+    },
+    {
+        "name": "Daisy",
+        "code": "#f8dc75"
+    },
+    {
+        "name": "Moonlight Shadow",
+        "code": "#4F3856"
+    },
+    {
+        "name": "Sunshine Coast",
+        "code": "#e4cea8"
+    },
+    {
+        "name": "Tahiti Blue",
+        "code": "#BCDFD9"
+    },
+    {
+        "name": "Phantom White",
+        "code": "#F7F7F7"
+    },
+    {
+        "name": "Burgundy",
+        "code": "#800020"
+    },
+    {
+        "name": "Electric Orange",
+        "code": "#ff3503"
+    },
+    {
+        "name": "Onyx",
+        "code": "#353935"
+    },
+    {
+        "name": "Leaf",
+        "code": "#3A5F0B"
+    },
+    {
+        "name": "Golden pink",
+        "code": "#B76E79"
+    },
+    {
+        "name": "Night Black",
+        "code": "#1b1e23"
+    },
+    {
+        "name": "Glacier",
+        "code": "#B5E2F4"
+    },
+    {
+        "name": "Dark Blue",
+        "code": "#00008b"
+    },
+    {
+        "name": "Charcoa",
+        "code": "#36454F"
+    },
+    {
+        "name": "Fjord",
+        "code": "#203769"
+    },
+    {
+        "name": "English Lavender",
+        "code": "#b48395"
+    },
+    {
+        "name": "Midnight Navy",
+        "code": "#343457"
+    },
+    {
+        "name": "Gray Mirror",
+        "code": "#d4e1ec"
+    },
+    {
+        "name": "Bahama Blue",
+        "code": "#355e94"
+    },
+    {
+        "name": "Blue Haze",
+        "code": "#ccdde0"
+    },
+    {
+        "name": "Aquamarine Green",
+        "code": "#7fffd4"
+    },
+    {
+        "name": "Glowing Black",
+        "code": "#252324"
+    },
+    {
+        "name": "Glowing Blue",
+        "code": "#93D0E3"
+    },
+    {
+        "name": "Pink Clay",
+        "code": "#ffd3d1"
+    },
+    {
+        "name": "Dark Cedar",
+        "code": "#777777"
+    },
+    {
+        "name": "Camo",
+        "code": "#78866b"
+    },
+    {
+        "name": "Blueberry Navy",
+        "code": "#363845"
+    },
+    {
+        "name": "Mystic Lagoon",
+        "code": "#99CBC9"
+    },
+    {
+        "name": "Electric Gunmetal",
+        "code": "#525555"
+    },
+    {
+        "name": "cyber teal",
+        "code": "#008080"
+    },
+    {
+        "name": "Black & Yellow",
+        "code": "#FFFFFF",
+        "image": "upload/attribute_value/20220324_1648099099_176492.png"
+    },
+    {
+        "name": "Alpine Green",
+        "code": "#496a4d"
+    },
+    {
+        "name": "Graphite Gray",
+        "code": "#4B4E53"
+    },
+    {
+        "name": "Gradient Bronze",
+        "code": "#EE9E77"
+    },
+    {
+        "name": "Camo Green",
+        "code": "#78866b"
+    },
+    {
+        "name": "Pacific Pearl",
+        "code": "#AFA1BD"
+    },
+    {
+        "name": "Stealth Black",
+        "code": "#584f44"
+    },
+    {
+        "name": "Polar White",
+        "code": "#eef4f4"
+    },
+    {
+        "name": "Horizon Blue",
+        "code": "#86B3D1"
+    },
+    {
+        "name": "Awesome Peach",
+        "code": "#FFE5B4"
+    },
+    {
+        "name": "Star Blue",
+        "code": "#007bb8"
+    },
+    {
+        "name": "Radiant Silver",
+        "code": "#8f979e"
+    },
+    {
+        "name": "Platinum Grey",
+        "code": "#979392"
+    },
+    {
+        "name": "Light Blue",
+        "code": "#ADD8E6"
+    },
+    {
+        "name": "Dark Green",
+        "code": "#10232A"
+    },
+    {
+        "name": "Light Silver",
+        "code": "#d8d8d8"
+    },
+    {
+        "name": "Volcanic Black",
+        "code": "#463d40"
+    },
+    {
+        "name": "Lustrous Gray",
+        "code": "#91A3B0"
+    },
+    {
+        "name": "Charcoal Grey",
+        "code": "#6C6868"
+    },
+    {
+        "name": "Real Grey",
+        "code": "#808080"
+    },
+    {
+        "name": "Speed Blue",
+        "code": "#002C5F"
+    },
+    {
+        "name": "Awesome Mint",
+        "code": "#A3FFE3"
+    },
+    {
+        "name": "Neo Gray",
+        "code": "#2C2D2E"
+    },
+    {
+        "name": "Chrome Silver",
+        "code": "#dbe4eb"
+    },
+    {
+        "name": "Awesome Gray",
+        "code": "#8C92AC"
+    },
+    {
+        "name": "Blue Tide",
+        "code": "#63C5D3"
+    },
+    {
+        "name": "Black Dusk",
+        "code": "#28292C"
+    },
+    {
+        "name": "Midday Dream",
+        "code": "#9ACDEA"
+    },
+    {
+        "name": "Sunburst Gold",
+        "code": "#f6e684"
+    },
+    {
+        "name": "Glowing Green",
+        "code": "#44CD75"
+    },
+    {
+        "name": "Elegant Black",
+        "code": "#131312"
+    },
+    {
+        "name": "Stargaze White",
+        "code": "#d9e6e9"
+    },
+    {
+        "name": "Urban Blue",
+        "code": "#6CE3E7"
+    },
+    {
+        "name": "Rainbow Spectrum",
+        "code": "#DDE1C8"
+    },
+    {
+        "name": "Deep Green",
+        "code": "#056608"
+    },
+    {
+        "name": "Orange Copper",
+        "code": "#B97B58"
+    },
+    {
+        "name": "Black/Silver",
+        "code": "#71706E",
+        "image": "upload/attribute_value/20220608_1654687254_907799.png"
+    },
+    {
+        "name": "White & Silver",
+        "code": "#DADBDD",
+        "image": "upload/attribute_value/20220608_1654687306_138709.png"
+    },
+    {
+        "name": "Black / Orange",
+        "code": "#ff8c00",
+        "image": "upload/attribute_value/20220704_1656908302_558046.jpeg"
+    },
+    {
+        "name": "Petal Pink",
+        "code": "#F2E2E0"
+    },
+    {
+        "name": "Blue Fog",
+        "code": "#9babbb"
+    },
+    {
+        "name": "Bronze",
+        "code": "#EDC3A6"
+    },
+    {
+        "name": "Sunrise Blue",
+        "code": "#63AED9"
+    },
+    {
+        "name": "Flash Blue",
+        "code": "#9DC7E0"
+    },
+    {
+        "name": "Flash Black",
+        "code": "#676A71"
+    },
+    {
+        "name": "Baby Blue",
+        "code": "#89CFF0"
+    },
+    {
+        "name": "Bora Purple",
+        "code": "#BEB1CF"
+    },
+    {
+        "name": "Grey Green",
+        "code": "#364145"
+    },
+    {
+        "name": "Antracite",
+        "code": "#383e42"
+    },
+    {
+        "name": "Cocoa Gold",
+        "code": "#b2860d"
+    },
+    {
+        "name": "Golden Black",
+        "code": "#281C02"
+    },
+    {
+        "name": "Black Gold",
+        "code": "#9E957A",
+        "image": "upload/attribute_value/20220903_1662177386_934841.jpeg"
+    },
+    {
+        "name": "Sapphire",
+        "code": "#8A97A8"
+    },
+    {
+        "name": "Silver Gray",
+        "code": "#C0C0C0"
+    },
+    {
+        "name": "Blue Oasis",
+        "code": "#266c94"
+    },
+    {
+        "name": "Deep Purple",
+        "code": "#665D6C"
+    },
+    {
+        "name": "GrayGreen",
+        "code": "#546263"
+    },
+    {
+        "name": "Superspeed Black",
+        "code": "#0A0A0A"
+    },
+    {
+        "name": "Racetrack Grey",
+        "code": "#343434"
+    },
+    {
+        "name": "Infinity Black",
+        "code": "#2E2E2F"
+    },
+    {
+        "name": "Misty White",
+        "code": "#E8F1F1"
+    },
+    {
+        "name": "Rosebud Pink",
+        "code": "#e0cdd1"
+    },
+    {
+        "name": "Sunrise Gold",
+        "code": "#FFE292"
+    },
+    {
+        "name": "Aquamarine Blue",
+        "code": "#2ADAE9"
+    },
+    {
+        "name": "Umber",
+        "code": "#733526"
+    },
+    {
+        "name": "Ink",
+        "code": "#2F2B39"
+    },
+    {
+        "name": "Storm Blue",
+        "code": "#414B57"
+    },
+    {
+        "name": "Elderberry",
+        "code": "#17182b"
+    },
+    {
+        "name": "Dawnlight Gold",
+        "code": "#F9F295"
+    },
+    {
+        "name": "Stardust",
+        "code": "",
+        "image": "upload/attribute_value/20221016_1665905584_213636.jpeg"
+    },
+    {
+        "name": "Diamond",
+        "code": "",
+        "image": "upload/attribute_value/20221016_1665905651_490566.jpeg"
+    },
+    {
+        "name": "Chandelier",
+        "code": "",
+        "image": "upload/attribute_value/20221014_1665744164_620873.jpeg"
+    },
+    {
+        "name": "Merble",
+        "code": "#E9E8ED"
+    },
+    {
+        "name": "Willow",
+        "code": "",
+        "image": "upload/attribute_value/20221016_1665909941_294350.jpeg"
+    },
+    {
+        "name": "Gray Shadow",
+        "code": "#3C403F"
+    },
+    {
+        "name": "Jade Fog",
+        "code": "#BDC6BF"
+    },
+    {
+        "name": "Denim Black",
+        "code": "#191C27"
+    },
+    {
+        "name": "Carbon Fiber",
+        "code": "#534F4C"
+    },
+    {
+        "name": "Frost Clear",
+        "code": "#E7E7E7"
+    },
+    {
+        "name": "Black Sesame",
+        "code": "#373A3F"
+    },
+    {
+        "name": "Starlit Blue",
+        "code": "#353C50"
+    },
+    {
+        "name": "Summer Cyan",
+        "code": "#00FFFF"
+    },
+    {
+        "name": "Sunlight Orange",
+        "code": "#EB9432"
+    },
+    {
+        "name": "Night Sea",
+        "code": "#272B3C"
+    },
+    {
+        "name": "Moon White",
+        "code": "#DDD6D0"
+    },
+    {
+        "name": "Classic Black",
+        "code": "#231F20"
+    },
+    {
+        "name": "Bamboo Green",
+        "code": "#BBCDB3"
+    },
+    {
+        "name": "Fluorite Black",
+        "code": "#383E42"
+    },
+    {
+        "name": "Vibrant Blue",
+        "code": "#8CE6F1"
+    },
+    {
+        "name": "Cosmic Grey",
+        "code": "#464B54"
+    },
+    {
+        "name": "Slate Grey",
+        "code": "#D5D8E2"
+    },
+    {
+        "name": "Black/Black",
+        "code": "#383838"
+    },
+    {
+        "name": "Drizzling Gold",
+        "code": "#EBE7B1"
+    },
+    {
+        "name": "Stellar Black",
+        "code": "#23282B"
+    },
+    {
+        "name": "Peach",
+        "code": "#F7BEA0"
+    },
+    {
+        "name": "Coal",
+        "code": "#646464"
+    },
+    {
+        "name": "Metaverse Green",
+        "code": "#D1FBF9"
+    },
+    {
+        "name": "Zero One",
+        "code": "#484C4F"
+    },
+    {
+        "name": "Eternal Green",
+        "code": "#4D6357"
+    },
+    {
+        "name": "Noble Black",
+        "code": "#2C2C2C"
+    },
+    {
+        "name": "Lavender Purple",
+        "code": "#ECE9F8"
+    },
+    {
+        "name": "Glory Blackï»¿",
+        "code": "#373940"
+    },
+    {
+        "name": "Sunshower",
+        "code": "#FBEBD1"
+    },
+    {
+        "name": "Rainy Night",
+        "code": "#354052"
+    },
+    {
+        "name": "Lime",
+        "code": "#E5F2C7"
+    },
+    {
+        "name": "Chromatic Gray",
+        "code": "#010707"
+    },
+    {
+        "name": "Titanium Gray",
+        "code": "#6D6C68"
+    },
+    {
+        "name": "Pastel Lime",
+        "code": "#BDDA76"
+    },
+    {
+        "name": "Awesome Graphite",
+        "code": "#232428"
+    },
+    {
+        "name": "Awesome Lime",
+        "code": "#DBF0A5"
+    },
+    {
+        "name": "Awesome Silver",
+        "code": "#CBCBBF"
+    },
+    {
+        "name": "Rust",
+        "code": "#A63719"
+    },
+    {
+        "name": "Dark Earth",
+        "code": "#775738"
+    },
+    {
+        "name": "Midnight Camo",
+        "code": "#313131"
+    },
+    {
+        "name": "Ice/Black",
+        "code": "#FFFEFD"
+    },
+    {
+        "name": "Mallard",
+        "code": "#2F3E50"
+    },
+    {
+        "name": "Frosted Ice",
+        "code": "#DADADA"
+    },
+    {
+        "name": "Kevlar Black",
+        "code": "#222222"
+    },
+    {
+        "name": "Ash",
+        "code": "#7B7B7B"
+    },
+    {
+        "name": "ICE",
+        "code": "#CBCBCB"
+    },
+    {
+        "name": "Space Whale",
+        "code": "#9CDCF6"
+    },
+    {
+        "name": "Ocean Explorer",
+        "code": "#28939D"
+    },
+    {
+        "name": "Unicorn Valley",
+        "code": "#FFFFFF"
+    },
+    {
+        "name": "Khaki Leather Strap",
+        "code": "#7A675A"
+    },
+    {
+        "name": "Emerald Forest",
+        "code": "#5C7E74"
+    },
+    {
+        "name": "Active Black",
+        "code": "#1A1915"
+    },
+    {
+        "name": "Cherry Blossom",
+        "code": "#D58E86"
+    },
+    {
+        "name": "Bold Black",
+        "code": "#1B1B1B"
+    },
+    {
+        "name": "Grey Hurricane",
+        "code": "#BEBCBB"
+    },
+    {
+        "name": "Blue Thunder",
+        "code": "#33659B"
+    },
+    {
+        "name": "Furious Red",
+        "code": "#D05156"
+    },
+    {
+        "name": "Raging Red",
+        "code": "#841118"
+    },
+    {
+        "name": "Bold Blue",
+        "code": "#51739C"
+    },
+    {
+        "name": "Deep Blue",
+        "code": "#406585"
+    },
+    {
+        "name": "Brown Leather Black",
+        "code": "#A77858"
+    },
+    {
+        "name": "Ice Blue",
+        "code": "#99B8D4"
+    },
+    {
+        "name": "Stripe Black",
+        "code": "#3E4349"
+    },
+    {
+        "name": "Vibrant Gold",
+        "code": "#FBF0CE"
+    },
+    {
+        "name": "Meteor Black",
+        "code": "#474C53"
+    },
+    {
+        "name": "Glitter Aqua",
+        "code": "#B6E4E0"
+    },
+    {
+        "name": "Metallic Grey",
+        "code": "#7A7874"
+    },
+    {
+        "name": "Stripe Blue",
+        "code": "#73A5C2"
+    },
+    {
+        "name": "Statement Black",
+        "code": "#282828"
+    },
+    {
+        "name": "Vintage Brown",
+        "code": "#4D3530"
+    },
+    {
+        "name": "Speedster Grey",
+        "code": "#A7A6A7"
+    },
+    {
+        "name": "Champion Gold",
+        "code": "#F8E8AD"
+    },
+    {
+        "name": "Charcoal",
+        "code": "#444444"
+    },
+    {
+        "name": "Blue Hour",
+        "code": "#445972"
+    },
+    {
+        "name": "Blue/Grey",
+        "code": "",
+        "image": "upload/attribute_value/20230729_1690609421_701620.jpeg"
+    },
+    {
+        "name": "Burgundy Black",
+        "code": "#534649"
+    },
+    {
+        "name": "Icy Blue",
+        "code": "#A6AFC2"
+    },
+    {
+        "name": "Dark Red",
+        "code": "#702F35"
+    },
+    {
+        "name": "Polar Silver",
+        "code": "#EAE8EB"
+    },
+    {
+        "name": "Mist Black",
+        "code": "#333333"
+    },
+    {
+        "name": "Predawn Black",
+        "code": "#2F3845"
+    },
+    {
+        "name": "Serenity Blue",
+        "code": "#86AAF2"
+    },
+    {
+        "name": "Glacier Glow",
+        "code": "#D9EBF6"
+    },
+    {
+        "name": "Endless Black",
+        "code": "#303437"
+    },
+    {
+        "name": "Capri Blue",
+        "code": "#89B6CB"
+    },
+    {
+        "name": "META Black",
+        "code": "#5D636A"
+    },
+    {
+        "name": "META Blue",
+        "code": "#5979A7"
+    },
+    {
+        "name": "Uyuni Blue",
+        "code": "#ACE7EC"
+    },
+    {
+        "name": "MR Doodle Edition",
+        "code": "",
+        "image": "upload/attribute_value/20230918_1695025702_743876.jpeg"
+    },
+    {
+        "name": "Dazzling Green",
+        "code": "#BCDDD9"
+    },
+    {
+        "name": "Winner Champagne",
+        "code": "#CAC0BA"
+    },
+    {
+        "name": "Ash Gray",
+        "code": "#56534E"
+    },
+    {
+        "name": "Cryo Blue",
+        "code": "#516FCE"
+    },
+    {
+        "name": "Black Midnight Camo",
+        "code": "#919191"
+    },
+    {
+        "name": "Ice/Silver",
+        "code": "#E3E3E3"
+    },
+    {
+        "name": "Glitter Purple",
+        "code": "#8287C4"
+    },
+    {
+        "name": "Titanium Silver",
+        "code": "#E4E3DE"
+    },
+    {
+        "name": "Cyan Lake",
+        "code": "#6197AB"
+    },
+    {
+        "name": "Light Pink",
+        "code": "#FEECE8"
+    },
+    {
+        "name": "Clay",
+        "code": "#AAA295"
+    },
+    {
+        "name": "Orange Sorbet",
+        "code": "#FFAF8C"
+    },
+    {
+        "name": "Guava",
+        "code": "#FF7372"
+    },
+    {
+        "name": "Sport Loop (Midnight)",
+        "code": "",
+        "image": "upload/attribute_value/20231014_1697256390_944960.jpeg"
+    },
+    {
+        "name": "Glowing Gold",
+        "code": "#FFE993"
+    },
+    {
+        "name": "Diamond Silver",
+        "code": "#E1E5E9"
+    },
+    {
+        "name": "Saint Martin Blue",
+        "code": "#9EC0C9"
+    },
+    {
+        "name": "White Titanium",
+        "code": "#DCD9D2"
+    },
+    {
+        "name": "Blue Titanium",
+        "code": "#3E424D"
+    },
+    {
+        "name": "Natural Titanium",
+        "code": "#A59E94"
+    },
+    {
+        "name": "Titan Black",
+        "code": "#313237"
+    },
+    {
+        "name": "Light Gold",
+        "code": "#FCEDE3"
+    },
+    {
+        "name": "Haute Black",
+        "code": "#272727"
+    },
+    {
+        "name": "Mystic Dawn",
+        "code": "#CBD1F5"
+    },
+    {
+        "name": "Forest Black",
+        "code": "#40483F"
+    },
+    {
+        "name": "Sky Silver",
+        "code": "#C5DEEB"
+    },
+    {
+        "name": "Blush",
+        "code": "#C9ADA2"
+    },
+    {
+        "name": "Dream Daisy",
+        "code": "",
+        "image": "upload/attribute_value/20231111_1699695938_336246.jpeg"
+    },
+    {
+        "name": "Magenta Lychee",
+        "code": "#C14053"
+    },
+    {
+        "name": "Titanium",
+        "code": "#F7EAE2"
+    },
+    {
+        "name": "Burgundy Bean",
+        "code": "#412534"
+    },
+    {
+        "name": "Grape Purple",
+        "code": "#443458"
+    },
+    {
+        "name": "Warm Grey",
+        "code": "#969187"
+    },
+    {
+        "name": "Mulberry",
+        "code": "#986F7D"
+    }
+]

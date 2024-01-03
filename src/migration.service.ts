@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Knex } from 'knex';
 import { InjectConnection } from 'nest-knexjs';
 import { ApiService } from './Api.service';
@@ -20,6 +20,16 @@ export class MigrationService {
     const apiService = new ApiService();
     await apiService.login();
     return await apiService.mediaSoftApi(mediaSoftProductDto);
+  }
+
+  // get product imei
+  async getProductIMEIInfoByModelNo(modelNo: number) {
+    if (!modelNo) {
+      throw new BadRequestException('modelNo is required');
+    }
+    const apiService = new ApiService();
+    await apiService.login();
+    return await apiService.getProductIMEIInfoByModel(Number(modelNo));
   }
 
   // return media soft products
@@ -115,25 +125,71 @@ export class MigrationService {
       })
     });
 
-    const skuProducts = await this.saas('sku').select('id', 'sku');
-    const existedSkuStocks = await this.saas('sku_stock');
-    const existedSkuStocksMap = new Map(existedSkuStocks?.map(stockItem => [stockItem.sku + stockItem.store_code, { stockId: stockItem.id, quantity: stockItem.stock_quantity }]));
+    // return [...stockListMap];
 
-    const insertItems = [];
-    const updateItems = [];
+    const warehouses = await this.saas('warehouse');
+    const warehouseMap = new Map(warehouses?.map(house => [house.code, house]));
+    // return [...warehouseMap];
+
+    const skuProducts = await this.saas('sku').select('id', 'sku');
+    const existedSkuStocks = await this.saas('warehouse_skus_stock')
+      .leftJoin(
+        'warehouse',
+        'warehouse.id',
+        '=',
+        'warehouse_skus_stock.warehouse_id'
+      ).leftJoin(
+        'sku',
+        'sku.id',
+        '=',
+        'warehouse_skus_stock.sku_id'
+      ).select(
+        'warehouse_skus_stock.id as stockId',
+        'warehouse.id as warehouse_id',
+        'code as store_code',
+        'sku_id',
+        'sku',
+        'qty as quantity'
+      );
+
+    // return existedSkuStocks;
+
+    const existedSkuStocksMap = new Map(existedSkuStocks?.map(stockItem => [stockItem.sku + stockItem.store_code, stockItem]));
+
+    // const existedSkuStocks = await this.saas('sku_stock');
+    // const existedSkuStocksMap = new Map(existedSkuStocks?.map(stockItem => [stockItem.sku + stockItem.store_code, { stockId: stockItem.id, quantity: stockItem.stock_quantity }]));
+
+    const insertItemsMap = new Map();
+    const updateItemsMap = new Map();
+    const notMatchedShopId = new Set();
+
     skuProducts?.forEach(product => {
       const stockProducts = stockListMap.get(product.sku);
-      if (skuProducts) {
+      if (stockProducts) {
         stockProducts?.forEach(item => {
           const stockExist = existedSkuStocksMap.get(item.sku + item.shopID);
 
           if (stockExist) {
             if (stockExist.quantity != item.balQty) {
-              updateItems.push({ id: stockExist.stockId, stock_quantity: item.balQty })
+              updateItemsMap.set(stockExist.sku + stockExist.store_code, {
+                id: stockExist.stockId,
+                stock_quantity: item.balQty,
+                ...stockExist
+              })
             }
           } else {
-            insertItems.push({
+            const existingWarehouse = warehouseMap.get(item.shopID);
+            let warehouseId = null;
+            if (existingWarehouse) {
+              warehouseId = existingWarehouse.id;
+            } else {
+              notMatchedShopId.add(item.shopID);
+              warehouseId = item.shopID;
+            }
+
+            insertItemsMap.set(item.sku + item.shopID, {
               sku_id: product.id,
+              warehouse_id: warehouseId,
               sku: item.sku,
               store_code: item.shopID,
               stock_quantity: item.balQty,
@@ -143,18 +199,45 @@ export class MigrationService {
       }
     })
 
+    if ([...notMatchedShopId].length) {
+      await this.saas('warehouse').insert([...notMatchedShopId].map(shopId => {
+        return {
+          name: 'null',
+          address: 'null',
+          lat: 'null',
+          long: 'null',
+          phone: 'null',
+          open_time: 'null',
+          code: shopId
+        };
+      }))
+    }
+
+    const newWarehouses = await this.saas('warehouse');
+    const newWarehouseMap = new Map(newWarehouses?.map(house => [house.code, house.id]));
+
+    const insertItems = [...insertItemsMap.values()].map(item => {
+      return {
+        sku_id: item.sku_id,
+        warehouse_id: newWarehouseMap.get(item.warehouse_id) || item.warehouse_id,
+        qty: item.stock_quantity
+      }
+    });
+
+    const updateItems = [...updateItemsMap.values()];
 
     if (insertItems.length) {
-      await this.saas('sku_stock').insert(insertItems);
+      await this.saas('warehouse_skus_stock').insert(insertItems);
     }
     if (updateItems.length) {
       const updated = updateItems.map(async (item) => {
-        return await this.saas('sku_stock').update({ stock_quantity: item.stock_quantity }).where('id', item.id);
+        return await this.saas('warehouse_skus_stock').update({ qty: item.stock_quantity }).where('id', item.id);
       });
 
       await Promise.all(updated);
     }
-    return { updateItems, insertItems };
+
+    return { updateItems: [...updateItemsMap.values()], insertItems: insertItems };
     // return [...existedSkuStocksMap]
   }
 
@@ -163,21 +246,50 @@ export class MigrationService {
     const newDbAllSku = (await this.saas('sku').select('sku')).map(sku => sku.sku);
 
     const oldSkuProducts = await this.getAllOldSkuProductsInfo(newDbAllSku);
-    oldSkuProducts.length;
+    // return oldSkuProducts;
 
     // update sku products
     return this.saas.transaction(trx => {
       const queries = oldSkuProducts.map(async (product) => {
+
+
+        if (product.attributes?.length) {
+          const skuProduct = await this.saas('sku').where('sku', product.sku).select('id').first();
+
+          if (skuProduct) {
+            await this.saas('sku_attribute').where('sku_id', skuProduct.id).del();
+
+            await this.saas('sku_attribute').insert(product.attributes.map(attr => {
+              return {
+                ...attr,
+                sku_id: skuProduct.id
+              }
+            }));
+          }
+        }
+
         return this.saas('sku').update({
           images: product.imagesStr,
           model_no: product.model_no
-        }).where('sku', product.sku).transacting(trx);;
+        }).where('sku', product.sku).transacting(trx);
+
       });
 
       Promise.all(queries)
         .then(trx.commit)
         .catch(trx.rollback);
     });
+  }
+
+  async changeQuoteFromProduct() {
+    const products = await this.saas('product').select('id', 'name');
+
+    const updatePromise = products?.map(async (product) => {
+      return this.saas('product').update({ name: this.decodeHtmlEntities(product.name) }).where('id', product.id);
+    });
+
+    return await Promise.all(updatePromise);
+
   }
 
   // migrate with old db
@@ -242,36 +354,43 @@ export class MigrationService {
     // return oldOrders;
 
 
-    // const usersWillCreate = new Map();
+    const usersWillCreate = new Map();
 
-    const newOrdersPromise = oldOrders?.map(async (order) => {
-      let userId = order.customer_id;
-
+    oldOrders?.forEach(order => {
       if (order.customer_id == 0) {
-        const existedUser = await this.saas('user').where('phone', order.customer_phone).first();
-        if (!existedUser) {
-          const inserted = await this.saas('user').insert({
-            type: 'customer',
-            avatar: null,
-            first_name: order.customer_name,
-            last_name: null,
-            email: order.customer_email,
-            phone: order.customer_phone,
-            gender: null,
-            password: `p${Math.floor(Math.random() * 1000000)}`,
-            status: 'active'
-          });
-          userId = inserted?.[0];
-          console.log(inserted)
-        } else {
-          userId = existedUser.id;
-        }
-
+        usersWillCreate.set(order.customer_phone, {
+          type: 'customer',
+          avatar: null,
+          first_name: order.customer_name,
+          last_name: null,
+          email: order.customer_email,
+          phone: order.customer_phone,
+          gender: null,
+          password: `p${Math.floor(Math.random() * 1000000)}`,
+          status: 'active'
+        });
       }
+    });
 
-      return await this.saas('order').insert({
+
+    const existedCustomers = await this.saas('user').whereIn('phone', [...usersWillCreate.values()].map(user => user.phone));
+    const existedCustomersSet = new Set(existedCustomers.map(customer => customer.phone));
+
+    const insertAbleUsers = [...usersWillCreate.values()].filter(user => !existedCustomersSet.has(user.phone));
+
+    if (insertAbleUsers.length) {
+      await this.saas('user').insert(insertAbleUsers);
+    }
+
+    // return [insertAbleUsers.length, [...existedCustomersSet].length, [...usersWillCreate.values()].length];
+
+    const newCreatedUsers = await this.saas('user').select('id', 'phone').whereIn('phone', [...usersWillCreate.values()].map(user => user.phone));
+    const newCreatedUsersMap = new Map(newCreatedUsers?.map(user => [user.phone, user.id]));
+
+    const newOrders = oldOrders?.map(order => {
+      return {
         order_number: order.order_id,
-        user_id: userId,
+        user_id: order.customer_id == 0 ? newCreatedUsersMap.get(order.customer_phone) : order.customer_id,
         subtotal: order.amount,
         delivery_charge: order.total_shipping_cost,
         grand_total: order.amount,
@@ -306,20 +425,67 @@ export class MigrationService {
         billing_postal_code: order.post_code,
         discount: null,
         offer_id: null,
-      })
+      }
     });
 
-    return await Promise.all(newOrdersPromise);
-    // const existedCustomers = await this.saas('user').whereIn('phone', [...usersWillCreate.values()].map(user => user.phone));
-    // const existedCustomersMap = new Map(existedCustomers.map(customer => [customer.phone, customer.id]));
-
-    // const insertAbleUsers = [...usersWillCreate.values()].filter(user => !existedCustomersMap.get(user.phone));
-
-    // return [...insertAbleUsers];
-    // await this.saas('order').insert(newOrders);
-    // return await this.migrateOrderProducts();
+    await this.saas('order').insert(newOrders);
+    return await this.migrateOrderProducts();
 
     // return "successfully migrated";
+  }
+
+  async replaceStrFromLongText() {
+    const products = await this.saas('product').select('id', 'long_description').whereNotNull('long_description');
+
+    const newProducts = products?.map(async (product) => {
+      const long_description = String(product?.long_description).replaceAll('https://gngp.sgp1.digitaloceanspaces.com/', 'https://gngmedia.s3.ap-southeast-1.amazonaws.com/');
+
+      return await this.saas('product').update({
+        long_description: long_description
+      }).where('id', product.id);
+    })
+
+    return await Promise.all(newProducts);
+  }
+
+  async filterSkuWithOldSkuProduct() {
+    // const newSkus = await this.saas('sku').pluck("sku");
+    // const filteredOldSkusProducts = await this.gng('portonics_product').whereNotIn('sku', newSkus).whereNot('parent_id', 0);
+
+    // await this.saas('portonics_product').insert(filteredOldSkusProducts);
+    // return filteredOldSkusProducts;
+
+    const newSkus = await this.saas('sku').pluck("sku");
+    const filteredProducts = await this.gng('portonics_product').whereNotIn('sku', newSkus).where('parent_id', 0);
+
+    await this.saas('portonics_parent_product').insert(filteredProducts);
+    return filteredProducts;
+  }
+
+  async convertToJson() {
+    const colorValues = await this.saas('all_color_value');
+    const targetValues = colorValues.map(cv => {
+      const target = {};
+
+      target['name'] = cv.value;
+      target['code'] = cv.color_code;
+
+      if (cv.image) {
+        target['image'] = `upload/attribute_value/${cv.image}`;
+      }
+
+      return target;
+    });
+
+    const updatePromise = targetValues.map(async (cv: any) => {
+      return await this.saas('sku_attribute').update({
+        code: cv.code,
+        image: cv.image || null
+      }).where('value', cv.name);
+    });
+
+    await Promise.all(updatePromise);
+    return targetValues;
   }
 
   private async migrateOrderProducts() {
@@ -460,7 +626,8 @@ export class MigrationService {
       const images = await this.gng('portonics_product_images')
         .where('product_id', product.id);
 
-      const category = await this.gng('portonics_product_categories').where('product_id', product.id).first();
+      const categoryRes = await this.gng('portonics_product_categories').where('product_id', product.id);
+      const category = categoryRes[categoryRes.length - 1];
 
       const imagesStr = images?.map(image => this.imagePrefix + image.name).toString();
 
@@ -505,15 +672,32 @@ export class MigrationService {
       )
       .whereIn('sku', newDbAllSku);
 
+    const attributesNames = await this.gng('portonics_attribute_translation').select('attr_id', 'name');
+    const attributesNamesMap = new Map(attributesNames?.map(attr => [attr.attr_id, attr.name]));
+
+    const attributesValues = await this.gng('portonics_attribute_values_translation').select('attr_value_id', 'value');
+    const attributesValuesMap = new Map(attributesValues?.map(attr => [attr.attr_value_id, attr.value]));
+
+    console.log({ names: [...attributesNamesMap], values: [...attributesValuesMap] });
     const allSkuProductsPromise = oldSkuProducts.map(async (product) => {
       const images = await this.gng('portonics_product_images')
         .where('product_id', product.id);
       const imagesStr = images?.map(image => this.imagePrefix + image.name).toString();
 
+      // attributes
+      const attributesList = await this.gng('portonics_product_attribute_combination').where('product_id', product.id);
+      const attributes = attributesList?.map(attr => {
+        return {
+          key: attributesNamesMap.get(attr.attr_id),
+          value: attributesValuesMap.get(attr.attr_value_id)
+        }
+      });
+
       return {
         ...product,
-        images: images,
-        imagesStr: imagesStr || null
+        // images: images,
+        imagesStr: imagesStr || null,
+        attributes: attributes || null
       }
     });
 
@@ -621,26 +805,32 @@ export class MigrationService {
       });
     }
 
-    const specification = await this.saas('specification').where('product_id', product.new_db_product_id);
-
-    product.feature?.forEach(async (spec) => {
-      // const isExist = await this.saas('specification').where('product_id', product.new_db_product_id)
-      await this.saas('specification').insert({
-        product_id: product.new_db_product_id,
-        key: spec.title,
-        value: spec.description
-      });
-    })
+    const specification = await this.saas('specification').where('product_id', product.new_db_product_id).first();
 
     if (!specification?.length) {
+      const specificationWillInsert = [];
+
+      product.feature?.forEach(async (spec) => {
+        // const isExist = await this.saas('specification').where('product_id', product.new_db_product_id)
+        specificationWillInsert.push({
+          product_id: product.new_db_product_id,
+          key: spec.title,
+          value: spec.description
+        });
+      });
+
       product.specification?.forEach(async (spec) => {
         // const isExist = await this.saas('specification').where('product_id', product.new_db_product_id)
-        await this.saas('specification').insert({
+        specificationWillInsert.push({
           product_id: product.new_db_product_id,
           key: spec.title,
           value: spec.description
         });
       })
+
+      if (specificationWillInsert.length) {
+        await this.saas('specification').insert(specificationWillInsert);
+      }
     }
   }
 

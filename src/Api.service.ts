@@ -16,6 +16,10 @@ export class ApiService {
     });
   }
 
+  async getProductIMEIInfoByModel(modelNo: number) {
+    return await this.apiCallGet(`Product/GetProductIMEIInfoByModel?model=${modelNo}`);
+  }
+
   async login() {
     const response = await this.apiCall(
       'Accounts/authenticate/Account/authenticate',
@@ -38,6 +42,20 @@ export class ApiService {
     const response = await axios.post(
       'http://203.76.110.162:8081/' + url,
       body,
+      config,
+    );
+    if (response.status == 200) return response.data;
+  }
+
+  async apiCallGet(url: string) {
+    const config = {
+      headers: {
+        Access_token: ApiService.key,
+        Accept: 'application/json',
+      },
+    };
+    const response = await axios.get(
+      'http://203.76.110.162:8081/' + url,
       config,
     );
     if (response.status == 200) return response.data;
