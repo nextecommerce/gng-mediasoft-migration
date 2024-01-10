@@ -83,31 +83,51 @@ export class MigrationService {
 
     // return [...allSkuProductsMap];
 
-    return this.saas.transaction(trx => {
-      const migratePromises = products.data?.map(async (product) => {
-        console.log(product.modelId);
+    const willInsertProductsMap = new Map();
+    products.data?.forEach(async (product) => {
 
-        const categoryId = newDbCategoriesMap.get(product.categoryName);
-        const brandId = newDbBrandsMap.get(String(product.brandName).toLowerCase());
+      product.productDetailResponses?.forEach((subProduct) => {
+        const existedSkuProductId = allSkuProductsMap.get(subProduct.pBarCode);
 
-        const existingParentProduct = await this.saas('product').select('id').where('mediasoft_model_id', product.modelId).first();
+        console.log(existedSkuProductId)
+        if (!existedSkuProductId) {
 
-        let productId = null;
-        if (existingParentProduct?.id) {
-          productId = existingParentProduct.id;
+          const categoryId = newDbCategoriesMap.get(product.categoryName);
+          const brandId = newDbBrandsMap.get(String(product.brandName).toLowerCase());
 
-        } else {
-
-          const [id] = await this.saas('product').insert({
+          willInsertProductsMap.set(product.modelId, {
             mediasoft_model_id: product.modelId,
             mediasoft_model_name: product.modelName,
             name: product.modelName,
             category_id: categoryId,
             brand_id: brandId,
-            status: 'inactive'
+            status: 'active'
           });
-          productId = id;
         }
+      });
+    });
+
+    const willInsertProducts = [...willInsertProductsMap.values()];
+    if (willInsertProducts.length) {
+      const existedProducts = await this.saas('product').whereIn('mediasoft_model_id', willInsertProducts.map(product => product.mediasoft_model_id));
+      existedProducts?.forEach(product => {
+        willInsertProductsMap.delete(product.mediasoft_model_id);
+      })
+    }
+    // return [...willInsertProductsMap.values()];
+    if ([...willInsertProductsMap.values()].length) {
+
+      await this.saas('product').insert([...willInsertProductsMap.values()]);
+    }
+
+
+    const newParentProducts = await this.saas('product').whereNotNull('mediasoft_model_id');
+    const newParentProductsMap = new Map(newParentProducts?.map(product => [Number(product.mediasoft_model_id), product.id]));
+
+    // return [...newParentProductsMap];
+
+    return this.saas.transaction(trx => {
+      const migratePromises = products.data?.map(async (product) => {
 
         return product.productDetailResponses?.map(async (subProduct) => {
           const existedSkuProductId = allSkuProductsMap.get(subProduct.pBarCode);
@@ -124,7 +144,9 @@ export class MigrationService {
             }).where('id', existedSkuProductId);
           } else {
 
-            return await this.insertProductToNewDb(product, categoryId, brandId, subProduct);
+            const productId = newParentProductsMap.get(Number(product.modelId));
+            console.log(productId);
+            return await this.insertProductToNewDb(productId, subProduct);
           }
         })
 
@@ -364,7 +386,7 @@ export class MigrationService {
       description: product.meta_description,
       tag: JSON.stringify(product.keywords?.split(',')),
       img_alt_text: product.name,
-      image: product.images?.[0]?.name,
+      image: String(product.imagesStr).split(',')?.[0] || null,
       type: 'product',
     }
   }
@@ -453,6 +475,7 @@ export class MigrationService {
       willInsertSkuAttributes.push(this.getSkuAttribute(product));
     });
 
+    // return willInsertSeo;
     // await this.saas('product').insert(willInsertParentProducts);
     // await this.saas('seo').insert(willInsertSeo);
     // await this.saas('specification').insert(specificationWillInsert.flat());
@@ -582,8 +605,8 @@ export class MigrationService {
       }
     });
 
-    // return newOrders;
-    // await this.saas('order').insert(newOrders);
+    // return newOrders.length;
+    await this.saas('order').insert(newOrders);
     return await this.migrateOrderProducts();
 
     // return "successfully migrated";
@@ -661,7 +684,7 @@ export class MigrationService {
       return {
         order_id: orderMap.get(product.order_id),
         order_number: product.order_id,
-        product_id: skuProduct ? skuProduct.product_id : null,
+        product_id: product.product_id,
         sku_id: skuProduct ? skuProduct.id : null,
         brand_id: parentProduct ? parentProduct.brand_id : null,
         category_id: parentProduct ? parentProduct.category_id : null,
@@ -689,11 +712,24 @@ export class MigrationService {
 
   async migrateOrderProductAttributes() {
     const oldProductAttributes = await this.gng('portonics_order_product_attribute_combination');
+    const oldProductAttributesMap = new Map();
+
+    oldProductAttributes?.forEach(attr => {
+      const existing = oldProductAttributesMap.get(attr.order_id);
+
+      if (!existing) {
+        oldProductAttributesMap.set(attr.order_id, [attr]);
+      } else {
+        existing.push(attr);
+        oldProductAttributesMap.set(attr.offer_id, existing);
+      }
+    })
+
     const newOrderProducts = await this.saas('order_product');
 
     const newProductAttributes = [];
     newOrderProducts?.forEach(product => {
-      const oldMatchedAttributes = oldProductAttributes.filter(attribute => attribute.order_id == product.order_number);
+      const oldMatchedAttributes = oldProductAttributesMap.get(product.order_number);
       if (oldMatchedAttributes) {
         oldMatchedAttributes.forEach(mattr => {
           newProductAttributes.push({
@@ -708,7 +744,7 @@ export class MigrationService {
     });
 
     return await this.saas('order_product_attribute').insert(newProductAttributes);
-    // return newProductAttributes;
+    return newProductAttributes.length;
   }
 
 
@@ -868,7 +904,7 @@ export class MigrationService {
   }
 
   // insert product into new db
-  private async insertProductToNewDb(productId, categoryId: number, brandId: number, subProduct) {
+  private async insertProductToNewDb(productId, subProduct) {
 
 
     await this.insertIntoSkuAndAttribute(productId, subProduct);
@@ -907,7 +943,7 @@ export class MigrationService {
       name: product.name,
       slug: product.slug,
       thumbnail: product.imagesStr,
-      long_description: this.decodeHtmlEntities(String(product.description)),
+      long_description: this.decodeHtmlEntities(String(product.description)).replaceAll('https://gngp.sgp1.digitaloceanspaces.com/', 'https://gngmedia.s3.ap-southeast-1.amazonaws.com/'),
       category_id: product.category_id,
       brand_id: product.brand_id,
       warranty: product.ws_title,
