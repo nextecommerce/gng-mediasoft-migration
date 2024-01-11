@@ -84,55 +84,126 @@ export class MigrationService {
     // return [...allSkuProductsMap];
 
     const willInsertProductsMap = new Map();
+    const willInsertGadgetProductMap = new Map();
+
     products.data?.forEach(async (product) => {
+
+      const checkMultipleGadgetProductMap = new Map();
 
       product.productDetailResponses?.forEach((subProduct) => {
         const existedSkuProductId = allSkuProductsMap.get(subProduct.pBarCode);
 
-        console.log(existedSkuProductId)
         if (!existedSkuProductId) {
 
           const categoryId = newDbCategoriesMap.get(product.categoryName);
           const brandId = newDbBrandsMap.get(String(product.brandName).toLowerCase());
 
-          willInsertProductsMap.set(product.modelId, {
-            mediasoft_model_id: product.modelId,
-            mediasoft_model_name: product.modelName,
-            name: product.modelName,
-            category_id: categoryId,
-            brand_id: brandId,
-            status: 'active'
-          });
+          if (product.categoryName != 'Live Demo') {
+            willInsertProductsMap.set(Number(product.modelId), {
+              mediasoft_model_id: product.modelId,
+              mediasoft_model_name: product.modelName,
+              name: product.modelName,
+              category_id: categoryId,
+              brand_id: brandId,
+              status: 'draft'
+            });
+
+            // if (subProduct.gadgetModelID) {
+            checkMultipleGadgetProductMap.set(subProduct.gadgetModelID, subProduct);
+            // }
+          }
         }
       });
+
+      // console.log([...checkMultipleGadgetProductSet.values()])
+      if ([...checkMultipleGadgetProductMap.values()].length > 1) {
+        for (let [key, targetProduct] of checkMultipleGadgetProductMap) {
+          if (key) {
+
+            const categoryId = newDbCategoriesMap.get(targetProduct.categoryName);
+            const brandId = newDbBrandsMap.get(String(targetProduct.brandName).toLowerCase());
+
+            willInsertGadgetProductMap.set(key, {
+              mediasoft_model_id: targetProduct.modelId,
+              mediasoft_model_name: targetProduct.modelName,
+              name: targetProduct.modelName,
+              category_id: categoryId,
+              brand_id: brandId,
+              item_id: targetProduct.itemId,
+              gadget_model_id: targetProduct.gadgetModelID,
+              status: 'draft'
+            });
+          }
+        }
+      }
     });
 
+
+    // return [...willInsertGadgetProductMap.values()];
+
     const willInsertProducts = [...willInsertProductsMap.values()];
+    const willInsertGadgetProducts = [...willInsertGadgetProductMap.values()];
+
     if (willInsertProducts.length) {
       const existedProducts = await this.saas('product').whereIn('mediasoft_model_id', willInsertProducts.map(product => product.mediasoft_model_id));
+      const existedGadgetProducts = await this.saas('product').whereIn('gadget_model_id', willInsertGadgetProducts.map(product => product.gadget_model_id));
+      // return existedProducts;
       existedProducts?.forEach(product => {
         willInsertProductsMap.delete(product.mediasoft_model_id);
       })
+
+      existedGadgetProducts?.forEach(product => {
+        willInsertGadgetProductMap.delete(product.gadget_model_id);
+      })
     }
-    // return [...willInsertProductsMap.values()];
+    // return [...willInsertProductsMap.values(), ...willInsertGadgetProductMap.values()];
     if ([...willInsertProductsMap.values()].length) {
 
       await this.saas('product').insert([...willInsertProductsMap.values()]);
     }
 
+    if ([...willInsertGadgetProductMap.values()].length) {
+
+      await this.saas('product').insert([...willInsertGadgetProductMap.values()]);
+    }
+
 
     const newParentProducts = await this.saas('product').whereNotNull('mediasoft_model_id');
     const newParentProductsMap = new Map(newParentProducts?.map(product => [Number(product.mediasoft_model_id), product.id]));
+    const newParentGadgetProductsMap = new Map();
 
-    // return [...newParentProductsMap];
+    newParentProducts?.forEach(product => {
+      if (product.gadget_model_id) {
+        newParentGadgetProductsMap.set(product.gadget_model_id, product.id);
+      }
+    })
+
+    // return [...newParentGadgetProductsMap];
 
     return this.saas.transaction(trx => {
       const migratePromises = products.data?.map(async (product) => {
 
         return product.productDetailResponses?.map(async (subProduct) => {
           const existedSkuProductId = allSkuProductsMap.get(subProduct.pBarCode);
+          let existedSkuGadgetProductId = null;
+          if (subProduct.gadgetModelID) {
+            existedSkuGadgetProductId = newParentGadgetProductsMap.get(subProduct.gadgetModelID);
+          }
 
-          if (existedSkuProductId) {
+          if (existedSkuProductId && existedSkuGadgetProductId) {
+            return await this.saas('sku').update({
+              product_id: existedSkuGadgetProductId,
+              price: subProduct.salePrice,
+              discounted_price: subProduct.salePrice,
+              cost_price: subProduct.costPrice,
+              point_earn: subProduct.pointEarn,
+              sbarcode: subProduct.sBarCode,
+              vat: subProduct.vatPercent,
+              gadget_model_id: subProduct.gadgetModelID,
+              item_id: subProduct.itemId,
+              updated_at: new Date()
+            }).where('id', existedSkuProductId);
+          } else if (existedSkuProductId && !existedSkuGadgetProductId) {
             return await this.saas('sku').update({
               price: subProduct.salePrice,
               discounted_price: subProduct.salePrice,
@@ -140,29 +211,45 @@ export class MigrationService {
               point_earn: subProduct.pointEarn,
               sbarcode: subProduct.sBarCode,
               vat: subProduct.vatPercent,
+              gadget_model_id: subProduct.gadgetModelID,
+              item_id: subProduct.itemId,
               updated_at: new Date()
             }).where('id', existedSkuProductId);
-          } else {
-
+          } else if(product.categoryName != 'Live Demo') {
+            // insert sku product 
             const productId = newParentProductsMap.get(Number(product.modelId));
-            console.log(productId);
-            return await this.insertProductToNewDb(productId, subProduct);
+            // return await this.insertProductToNewDb(productId, subProduct);
+
+            // if (!productId && !existedSkuGadgetProductId) {
+            //   console.log(subProduct);
+            // }
+
+            const [skuId] = await this.saas('sku').insert({
+              product_id: existedSkuGadgetProductId ? existedSkuGadgetProductId : productId,
+              sku: subProduct.pBarCode,
+              custom_sku: subProduct.pBarCode,
+              stock_quantity: 1,
+              price: subProduct.salePrice,
+              discounted_price: subProduct.salePrice,
+              cost_price: subProduct.costPrice,
+              point_earn: subProduct.pointEarn,
+              sbarcode: subProduct.sBarCode,
+              vat: subProduct.vatPercent,
+              gadget_model_id: subProduct.gadgetModelID,
+              item_id: subProduct.itemId,
+            });
+
+            await this.saas('sku_attribute').insert([{
+              sku_id: skuId,
+              key: 'Color',
+              value: subProduct.colorName,
+            }, {
+              sku_id: skuId,
+              key: 'Memory',
+              value: subProduct.memoryCapacity,
+            }]);
           }
         })
-
-        // const existedProduct = await this.saas('product').where('mediasoft_model_id', product.modelId).first();
-        // const existedProduct = allNewProductsMap.get(Number(product.modelId));
-
-        // const categoryId = newDbCategoriesMap.get(product.categoryName);
-        // const brandId = newDbBrandsMap.get(String(product.brandName).toLowerCase());
-        // if (!existedProduct) {
-        //   // insert products to new db
-        //   return await this.insertProductToNewDb(product, categoryId, brandId);
-        // } else {
-
-        //   // update products to new db
-        //   return await this.updateProductToNewDb(product, existedProduct, categoryId, brandId, trx);
-        // }
       })
 
       Promise.all(migratePromises)
@@ -184,7 +271,7 @@ export class MigrationService {
     const stockListMap = new Map();
     stock.data?.forEach(stockItem => {
       stockItem?.stockList?.forEach(item => {
-        const sku = item?.itemID || 'undefined';
+        const sku = item?.pBarcode?.slice(5) || 'undefined';
         if (!stockListMap.has(sku)) {
           stockListMap.set(sku, [{ ...item, sku }]);
         } else {
@@ -872,68 +959,6 @@ export class MigrationService {
     });
 
     return await Promise.all(allSkuProductsPromise);
-  }
-
-  // update product to new dab
-  private async updateProductToNewDb(product, existedProduct, categoryId, brandId, trx) {
-
-    // return await this.saas('product').update({
-    //   category_id: categoryId,
-    //   brand_id: brandId,
-    //   slug: this.generateSlug(String(product.modelName))
-    // }).where({ mediasoft_model_id: product.modelId, slug: null }).transacting(trx);
-
-    product.productDetailResponses?.map(async (subProduct) => {
-      const existedSkuProduct = await this.saas('sku').where('sku', subProduct.pBarCode).first();
-
-      if (!existedSkuProduct) {
-        await this.insertIntoSkuAndAttribute(existedProduct.id, subProduct);
-      } else {
-
-        await this.saas('sku').update({
-          stock_quantity: 1,
-          price: subProduct.salePrice,
-          discounted_price: subProduct.salePrice,
-          cost_price: subProduct.costPrice,
-          point_earn: subProduct.pointEarn,
-          sbarcode: subProduct.sBarCode,
-          vat: subProduct.vatPercent
-        }).where('id', existedSkuProduct.id);
-      }
-    })
-  }
-
-  // insert product into new db
-  private async insertProductToNewDb(productId, subProduct) {
-
-
-    await this.insertIntoSkuAndAttribute(productId, subProduct);
-  }
-
-  // insert sku product & attributes 
-  private async insertIntoSkuAndAttribute(productId: number, subProduct) {
-    const [skuId] = await this.saas('sku').insert({
-      product_id: productId,
-      sku: subProduct.pBarCode,
-      custom_sku: subProduct.pBarCode,
-      stock_quantity: 1,
-      price: subProduct.salePrice,
-      discounted_price: subProduct.salePrice,
-      cost_price: subProduct.costPrice,
-      point_earn: subProduct.pointEarn,
-      sbarcode: subProduct.sBarCode,
-      vat: subProduct.vatPercent
-    });
-
-    await this.saas('sku_attribute').insert([{
-      sku_id: skuId,
-      key: 'Color',
-      value: subProduct.colorName,
-    }, {
-      sku_id: skuId,
-      key: 'Memory',
-      value: subProduct.memoryCapacity,
-    }]);
   }
 
   // update new db from old db products
