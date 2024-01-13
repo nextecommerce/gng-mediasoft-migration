@@ -35,6 +35,21 @@ export class AppController {
     }
   }
 
+  @Post('migrate-with-mediasoft-gadget')
+  async migrateMediaSoftGadgetProduct() {
+    try {
+      const data = await this.migrationService.migrateMediaSoftGadgetModelProduct();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      console.log(error)
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
 
   @Post('migrate-with-mediasoft')
   async migrateMediaSoftProduct() {
@@ -65,22 +80,6 @@ export class AppController {
       throw new HttpException(error.message, error.status);
     }
   }
-
-  @Post('migrate-with-old-sku')
-  async migrateWithOldDbSku() {
-    try {
-      const data = await this.migrationService.migrateWithOldDbSku();
-
-      return {
-        success: true,
-        data
-      }
-    } catch (error) {
-      console.log(error)
-      throw new HttpException(error.message, error.status);
-    }
-  }
-
   @Post('migrate-with-old-product')
   async migrateWithOldDbProduct() {
     try {
