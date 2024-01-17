@@ -151,6 +151,20 @@ export class AppController {
     }
   }
 
+  @Post('migrate-order-logs')
+  async migrateOrderLogs() {
+    try {
+      const data = await this.migrationService.migrateOrderLog();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   @Get('replace-url-from-description')
   async replaceStrFromLongText() {
     try {

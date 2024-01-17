@@ -498,7 +498,7 @@ export class MigrationService {
       name: this.decodeHtmlEntities(product.name),
       slug: product.slug,
       thumbnail: product.imagesStr,
-      long_description: this.decodeHtmlEntities(String(product.description)),
+      long_description: this.decodeHtmlEntities(String(product.description)).replaceAll('https://gngp.sgp1.digitaloceanspaces.com/', 'https://gngmedia.s3.ap-southeast-1.amazonaws.com/'),
       category_id: product.category_id,
       brand_id: product.brand_id,
       warranty: product.ws_title,
@@ -678,13 +678,14 @@ export class MigrationService {
   // migrate customers
   async migrateOrders() {
     const oldOrders = await this.gng('portonics_order')
+      .select("*", "portonics_order.id", "portonics_order.status")
       .leftJoin(
         'portonics_order_address',
         'portonics_order_address.order_id',
         '=',
         'portonics_order.order_id'
       );
-    // return oldOrders;
+    // return oldOrders[0];
 
 
     const usersWillCreate = new Map();
@@ -738,7 +739,7 @@ export class MigrationService {
         shipping_email: order.billing_customer_email || 'null',
         shipping_country: order.country,
         shipping_city: order.city,
-        shipping_area: order.post_code + " " + order.area,
+        shipping_area: order.area,
         shipping_street: order.address1,
         shipping_lat: null,
         shipping_lon: null,
@@ -747,7 +748,7 @@ export class MigrationService {
         billing_email: order.billing_customer_email || 'null',
         billing_country: order.country,
         billing_city: order.city,
-        billing_area: order.post_code + " " + order.area,
+        billing_area: order.area,
         billing_street: order.address1,
         billing_lat: null,
         billing_lon: null,
@@ -762,7 +763,7 @@ export class MigrationService {
       }
     });
 
-    // return newOrders.length;
+    // return newOrders[newOrders.length - 1];
     await this.saas('order').insert(newOrders);
     return await this.migrateOrderProducts();
 
@@ -781,6 +782,18 @@ export class MigrationService {
     })
 
     return await Promise.all(newProducts);
+  }
+
+  async migrateOrderLog() {
+    const oldOrderLogs = await this.gng('portonics_order_status_log');
+    const orderNumbers = oldOrderLogs?.map(log => log.order_id);
+
+    const orderNumbersSet = new Set(orderNumbers);
+    const uniqueOrderNumbers = [...orderNumbersSet.values()];
+
+    const newOrders = await this.saas('order').whereIn('order_number', uniqueOrderNumbers);
+
+    return newOrders.length;
   }
 
   async filterSkuWithOldSkuProduct() {
@@ -869,24 +882,27 @@ export class MigrationService {
 
   async migrateOrderProductAttributes() {
     const oldProductAttributes = await this.gng('portonics_order_product_attribute_combination');
+    // return oldProductAttributes.length;
     const oldProductAttributesMap = new Map();
 
     oldProductAttributes?.forEach(attr => {
-      const existing = oldProductAttributesMap.get(attr.order_id);
+      const existing = oldProductAttributesMap.get(String(attr.order_id) + attr.product_id);
 
       if (!existing) {
-        oldProductAttributesMap.set(attr.order_id, [attr]);
+        oldProductAttributesMap.set(String(attr.order_id) + attr.product_id, [attr]);
       } else {
         existing.push(attr);
-        oldProductAttributesMap.set(attr.offer_id, existing);
+        oldProductAttributesMap.set(String(attr.order_id) + attr.product_id, existing);
       }
     })
 
+    // return [...oldProductAttributesMap];
     const newOrderProducts = await this.saas('order_product');
 
+    // return newOrderProducts.length;
     const newProductAttributes = [];
     newOrderProducts?.forEach(product => {
-      const oldMatchedAttributes = oldProductAttributesMap.get(product.order_number);
+      const oldMatchedAttributes = oldProductAttributesMap.get(String(product.order_number) + product.product_id);
       if (oldMatchedAttributes) {
         oldMatchedAttributes.forEach(mattr => {
           newProductAttributes.push({
@@ -900,8 +916,9 @@ export class MigrationService {
       }
     });
 
+    // return newProductAttributes;
     return await this.saas('order_product_attribute').insert(newProductAttributes);
-    return newProductAttributes.length;
+
   }
 
 
