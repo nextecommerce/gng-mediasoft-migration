@@ -40,9 +40,9 @@ export class MigrationService {
   }
 
   // migrate with new database from media soft product
-  async migrateMediaSoftGadgetModelProduct() {
+  async migrateMediaSoftGadgetModelProduct(mediaSoftProductDto: MediaSoftProductDto) {
 
-    const products = await this.getMediaSoftProduct();
+    const products = await this.getMediaSoftProduct(mediaSoftProductDto);
     if (!products?.data) {
       throw new NotFoundException('product not found');
     }
@@ -222,8 +222,8 @@ export class MigrationService {
   }
 
   // migrate with new database from media soft product
-  async migrateMediaSoftProduct() {
-    const products = await this.getMediaSoftProduct();
+  async migrateMediaSoftProduct(mediaSoftProductDto: MediaSoftProductDto) {
+    const products = await this.getMediaSoftProduct(mediaSoftProductDto);
     if (!products?.data) {
       throw new NotFoundException('product not found');
     }
@@ -785,15 +785,113 @@ export class MigrationService {
   }
 
   async migrateOrderLog() {
-    const oldOrderLogs = await this.gng('portonics_order_status_log');
-    const orderNumbers = oldOrderLogs?.map(log => log.order_id);
+    const oldOrderLogs = await this.gng('portonics_order_status_log')
+      .leftJoin('portonics_customer', 'portonics_customer.id', 'portonics_order_status_log.user_id');
 
-    const orderNumbersSet = new Set(orderNumbers);
+    const orderNumbersSet = new Set();
+    const customerEmailSet = new Set();
+    const productIdsSet = new Set();
+
+    oldOrderLogs?.forEach(log => {
+      orderNumbersSet.add(log.order_id);
+      customerEmailSet.add(log.email);
+      productIdsSet.add(log.product_id);
+    });
+
     const uniqueOrderNumbers = [...orderNumbersSet.values()];
 
     const newOrders = await this.saas('order').whereIn('order_number', uniqueOrderNumbers);
+    const newUsers = await this.saas('user').whereIn('email', [...customerEmailSet.values()]).select('id', 'email');
+    // const newProducts = await this.saas('product').whereIn('id', [...productIdsSet.values()]);
+    const newSkuProducts = await this.saas('sku').whereIn('id', [...productIdsSet.values()]);
 
-    return newOrders.length;
+    const newOrdersMap = new Map(newOrders.map(order => [order.order_number, order.id]));
+    const newUsersMap = new Map(newUsers.map(user => [user.email, user.id]));
+    const newSkuProductsMap = new Map(newSkuProducts.map(sku => [sku.id, sku]));
+
+    const willInsertOrderLogs = oldOrderLogs.map(order => {
+      return {
+        user_id: newUsersMap.get(order.email) || order.user_id,
+        order_id: newOrdersMap.get(order.order_id),
+        type: order.type_id,
+        message: "",
+        // old_data: JSON.stringify(newSkuProductsMap.get(order.product_id) || order.product_id),
+        old_data: order.product_id,
+        // new_data: "",
+        status: order.order_status,
+        product_status: order.product_status,
+      }
+    })
+
+
+    // return willInsertOrderLogs;
+
+    const part1 = willInsertOrderLogs.slice(0, 50000);
+    const part2 = willInsertOrderLogs.slice(50000, 100000);
+    const part3 = willInsertOrderLogs.slice(100000, 150000);
+    const part4 = willInsertOrderLogs.slice(150000);
+
+    await this.saas('order_log').insert(part1);
+    await this.saas('order_log').insert(part2);
+    await this.saas('order_log').insert(part3);
+    await this.saas('order_log').insert(part4);
+    return 1;
+    // return willInsertOrderLogs.length;
+  }
+
+  async migrateOrderNote() {
+    const oldOrderNotes = await this.gng('portonics_order_internal_note');
+
+    const orderNumbersSet = new Set();
+
+    oldOrderNotes?.forEach(log => {
+      orderNumbersSet.add(log.order_id);
+    });
+
+    const uniqueOrderNumbers = [...orderNumbersSet.values()];
+    const newOrders = await this.saas('order').whereIn('order_number', uniqueOrderNumbers);
+
+    const newOrdersMap = new Map(newOrders.map(order => [order.order_number, order.id]));
+
+    const willInsertOrderNotes = oldOrderNotes.map(order => {
+      return {
+        user_id: 0,
+        order_id: newOrdersMap.get(order.order_id),
+        message: order.note,
+        created_at: order.created_at,
+        updated_at: order.updated_at,
+      }
+    })
+
+
+    // return willInsertOrderLogs;
+
+    // const part1 = willInsertOrderLogs.slice(0, 50000);
+    // const part2 = willInsertOrderLogs.slice(50000, 100000);
+    // const part3 = willInsertOrderLogs.slice(100000, 150000);
+    // const part4 = willInsertOrderLogs.slice(150000);
+
+    // await this.saas('order_log').insert(part1);
+    // await this.saas('order_log').insert(part2);
+    // await this.saas('order_log').insert(part3);
+    await this.saas('order_note').insert(willInsertOrderNotes);
+    // return 1;
+    return willInsertOrderNotes.length;
+  }
+
+  // test db
+  async testDB() {
+    // const users = await this.saas('user').select('id', 'email', 'phone', 'first_name', 'last_name');
+    // const willInsert = users.map(user => {
+    //   return {
+    //     key: user.email,
+    //     value: JSON.stringify(user)
+    //   }
+    // })
+
+    // await this.gng('test').insert(willInsert);
+    return await this.gng('test1').select('*').where({value: "{\"id\":821,\"email\":\"sujan.abdullah@gmail.com\",\"phone\":null,\"first_name\":\"sujan abdullah\",\"last_name\":null}"});
+    // return await this.gng('test1').select('*');
   }
 
   async filterSkuWithOldSkuProduct() {

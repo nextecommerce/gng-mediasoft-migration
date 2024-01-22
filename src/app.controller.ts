@@ -36,9 +36,9 @@ export class AppController {
   }
 
   @Post('migrate-with-mediasoft-gadget')
-  async migrateMediaSoftGadgetProduct() {
+  async migrateMediaSoftGadgetProduct(@Body() mediaSoftProductDto: MediaSoftProductDto) {
     try {
-      const data = await this.migrationService.migrateMediaSoftGadgetModelProduct();
+      const data = await this.migrationService.migrateMediaSoftGadgetModelProduct(mediaSoftProductDto);
 
       return {
         success: true,
@@ -52,9 +52,9 @@ export class AppController {
 
 
   @Post('migrate-with-mediasoft')
-  async migrateMediaSoftProduct() {
+  async migrateMediaSoftProduct(@Body() mediaSoftProductDto: MediaSoftProductDto) {
     try {
-      const data = await this.migrationService.migrateMediaSoftProduct();
+      const data = await this.migrationService.migrateMediaSoftProduct(mediaSoftProductDto);
 
       return {
         success: true,
@@ -165,6 +165,20 @@ export class AppController {
     }
   }
 
+  @Post('migrate-order-notes')
+  async migrateOrderNotes() {
+    try {
+      const data = await this.migrationService.migrateOrderNote();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
   @Get('replace-url-from-description')
   async replaceStrFromLongText() {
     try {
@@ -211,6 +225,20 @@ export class AppController {
   async changeQuoteFromProduct() {
     try {
       const data = await this.migrationService.changeQuoteFromProduct();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Get('db-test')
+  async testDB() {
+    try {
+      const data = await this.migrationService.testDB();
 
       return {
         success: true,
