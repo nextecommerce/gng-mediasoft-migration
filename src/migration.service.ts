@@ -334,39 +334,141 @@ export class MigrationService {
   }
 
   // migrate stock quantity
-  async migrateStockQuantity(mediaSoftProductDto: MediaSoftProductDto) {
-    const products = await this.getMediaSoftProduct(mediaSoftProductDto);
-    const pBarcodesSet = new Set();
+  async migrateStockQuantity(mediaSoftProductStockDto: MediaSoftProductStockDto) {
+    const stock = await this.getMediaSoftProductStock(mediaSoftProductStockDto);
 
-    products?.data?.forEach(product => {
-      product?.productDetailResponses?.forEach(detail => {
-        pBarcodesSet.add(detail.pBarCode);
-      });
-    });
+    if (!stock?.data?.length) {
+      throw new NotFoundException('stock not found');
+    }
 
-    const pBarcodes = [...pBarcodesSet.values()];
-
-    let count = 0;
-    const stockPromise = pBarcodes.forEach(async (code: string) => {
-      count += 1000;
-      setTimeout(async () => {
-        try {
-
-          console.log("inside: " + new Date());
-          const stock = await this.getMediaSoftProductStock({
-            barcode: String(code),
-            modelName: "ALL",
-            shopID: "ALL"
-          });
-
-          const data = await this.updateSkuStock(stock, [code]);
-          console.log(data);
-        } catch (error) {
-          console.log(error.message);
+    const stockListMap = new Map();
+    stock.data?.forEach(stockItem => {
+      stockItem?.stockList?.forEach(item => {
+        const sku = item?.pBarcode?.slice(5) || 'undefined';
+        if (!stockListMap.has(sku)) {
+          stockListMap.set(sku, [{ ...item, sku }]);
+        } else {
+          const existedItems: any[] = stockListMap.get(sku);
+          existedItems.push({ ...item, sku });
+          stockListMap.set(sku, existedItems);
         }
-      }, count);
+      })
     });
 
+    // return [...stockListMap];
+
+    const warehouses = await this.saas('warehouse');
+    const warehouseMap = new Map(warehouses?.map(house => [house.code, house]));
+    // return [...warehouseMap];
+
+    const skuProducts = await this.saas('sku').select('id', 'sku');
+    const existedSkuStocks = await this.saas('warehouse_skus_stock')
+      .leftJoin(
+        'warehouse',
+        'warehouse.id',
+        '=',
+        'warehouse_skus_stock.warehouse_id'
+      ).leftJoin(
+        'sku',
+        'sku.id',
+        '=',
+        'warehouse_skus_stock.sku_id'
+      ).select(
+        'warehouse_skus_stock.id as stockId',
+        'warehouse.id as warehouse_id',
+        'code as store_code',
+        'sku_id',
+        'sku',
+        'qty as quantity'
+      );
+
+    // return existedSkuStocks;
+
+    const existedSkuStocksMap = new Map(existedSkuStocks?.map(stockItem => [stockItem.sku + stockItem.store_code, stockItem]));
+
+    // const existedSkuStocks = await this.saas('sku_stock');
+    // const existedSkuStocksMap = new Map(existedSkuStocks?.map(stockItem => [stockItem.sku + stockItem.store_code, { stockId: stockItem.id, quantity: stockItem.stock_quantity }]));
+
+    const insertItemsMap = new Map();
+    const updateItemsMap = new Map();
+    const notMatchedShopId = new Set();
+
+    skuProducts?.forEach(product => {
+      const stockProducts = stockListMap.get(product.sku);
+      if (stockProducts) {
+        stockProducts?.forEach(item => {
+          const stockExist = existedSkuStocksMap.get(item.sku + item.shopID);
+
+          if (stockExist) {
+            if (stockExist.quantity != item.balQty) {
+              updateItemsMap.set(stockExist.sku + stockExist.store_code, {
+                id: stockExist.stockId,
+                stock_quantity: item.balQty,
+                ...stockExist
+              })
+            }
+          } else {
+            const existingWarehouse = warehouseMap.get(item.shopID);
+            let warehouseId = null;
+            if (existingWarehouse) {
+              warehouseId = existingWarehouse.id;
+            } else {
+              notMatchedShopId.add(item.shopID);
+              warehouseId = item.shopID;
+            }
+
+            insertItemsMap.set(item.sku + item.shopID, {
+              sku_id: product.id,
+              warehouse_id: warehouseId,
+              sku: item.sku,
+              store_code: item.shopID,
+              stock_quantity: item.balQty,
+            })
+          }
+        })
+      }
+    })
+
+    if ([...notMatchedShopId].length) {
+      await this.saas('warehouse').insert([...notMatchedShopId].map(shopId => {
+        return {
+          name: 'null',
+          address: 'null',
+          lat: 'null',
+          long: 'null',
+          phone: 'null',
+          open_time: 'null',
+          code: shopId
+        };
+      }))
+    }
+
+    const newWarehouses = await this.saas('warehouse');
+    const newWarehouseMap = new Map(newWarehouses?.map(house => [house.code, house.id]));
+
+    const insertItems = [...insertItemsMap.values()].map(item => {
+      return {
+        sku_id: item.sku_id,
+        warehouse_id: newWarehouseMap.get(item.warehouse_id) || item.warehouse_id,
+        qty: item.stock_quantity
+      }
+    });
+
+    const updateItems = [...updateItemsMap.values()];
+
+    if (insertItems.length) {
+      await this.saas('warehouse_skus_stock').insert(insertItems);
+    }
+    if (updateItems.length) {
+      const updated = updateItems.map(async (item) => {
+        return await this.saas('warehouse_skus_stock').update({ qty: item.stock_quantity }).where('id', item.id);
+      });
+
+      await Promise.all(updated);
+    }
+
+    return { updateItems: [...updateItemsMap.values()], insertItems: insertItems };
+    // return [...existedSkuStocksMap]
   }
 
   private async updateSkuStock(stock: any, pBarcode: string[]) {
