@@ -1,9 +1,38 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { Knex } from 'knex';
-import { InjectConnection } from 'nest-knexjs';
+import { InjectConnection, InjectModel } from 'nest-knexjs';
 import { ApiService } from './Api.service';
 import { MediaSoftProductDto, MediaSoftProductStockDto } from './dto/mediasoft-product.dto';
 import * as he from 'he';
+import { UrlRedirection } from './url-redirection/schema/url-redirection.schema';
+import { Model } from 'mongoose';
+import { UrlRedirectionService } from './url-redirection/url-redirection.service';
+
+
+const ORDER_STATUS_MAP = new Map([
+  [2, "Pending"],
+  [39, "Cancelled"],
+  [3, "Verification Pending - COD"],
+  [10, "Order Placed - Online Payment"],
+  [99, "Delivered"],
+  [40, "Dropped"],
+  [41, "Cancelled By Cron"],
+  [11, "Order Placed"],
+  [38, "Cancelled For Cards"],
+  [21, "Replace DAAP"],
+  [1, "Partial Delivered"],
+  [31, "Refund DAAP"],
+  [30, "Refund DOAP"],
+  [37, "Rejected Payment"],
+  [1, "Order Placed"],
+  [12, "Processed"],
+  [13, "On the way"],
+  [20, "Replace DOAP"],
+  [41, "Delivered"],
+  [3, "On the way"],
+  [6, "Verification Pending - Card On Delivery"],
+  [null, "Order Placed"],
+]);
 
 @Injectable()
 export class MigrationService {
@@ -13,6 +42,7 @@ export class MigrationService {
   constructor(
     @InjectConnection('gng') private readonly gng: Knex,
     @InjectConnection('saas') private readonly saas: Knex,
+    private urlRedirectionService: UrlRedirectionService
   ) { }
 
   // return media soft products
@@ -304,8 +334,43 @@ export class MigrationService {
   }
 
   // migrate stock quantity
-  async migrateStockQuantity(mediaSoftProductStockDto: MediaSoftProductStockDto) {
-    const stock = await this.getMediaSoftProductStock(mediaSoftProductStockDto);
+  async migrateStockQuantity(mediaSoftProductDto: MediaSoftProductDto) {
+    const products = await this.getMediaSoftProduct(mediaSoftProductDto);
+    const pBarcodesSet = new Set();
+
+    products?.data?.forEach(product => {
+      product?.productDetailResponses?.forEach(detail => {
+        pBarcodesSet.add(detail.pBarCode);
+      });
+    });
+
+    const pBarcodes = [...pBarcodesSet.values()];
+
+    let count = 0;
+    const stockPromise = pBarcodes.forEach(async (code: string) => {
+      count += 1000;
+      setTimeout(async () => {
+        try {
+
+          console.log("inside: " + new Date());
+          const stock = await this.getMediaSoftProductStock({
+            barcode: String(code),
+            modelName: "ALL",
+            shopID: "ALL"
+          });
+
+          const data = await this.updateSkuStock(stock, [code]);
+          console.log(data);
+        } catch (error) {
+          console.log(error.message);
+        }
+      }, count);
+    });
+
+  }
+
+  private async updateSkuStock(stock: any, pBarcode: string[]) {
+
 
     if (!stock?.data?.length) {
       throw new NotFoundException('stock not found');
@@ -438,7 +503,6 @@ export class MigrationService {
     }
 
     return { updateItems: [...updateItemsMap.values()], insertItems: insertItems };
-    // return [...existedSkuStocksMap]
   }
 
   // migrate with old db sku
@@ -752,7 +816,8 @@ export class MigrationService {
         billing_street: order.address1,
         billing_lat: null,
         billing_lon: null,
-        status: order.status,
+        status: ORDER_STATUS_MAP.get(order.order_status) || order.status,
+        status_code: order.status,
         created_at: order.created_at,
         updated_at: order.updated_at,
         deleted_at: null,
@@ -786,7 +851,8 @@ export class MigrationService {
 
   async migrateOrderLog() {
     const oldOrderLogs = await this.gng('portonics_order_status_log')
-      .leftJoin('portonics_customer', 'portonics_customer.id', 'portonics_order_status_log.user_id');
+      .leftJoin('portonics_customer', 'portonics_customer.id', 'portonics_order_status_log.user_id')
+      .select("*", "portonics_order_status_log.created_at");
 
     const orderNumbersSet = new Set();
     const customerEmailSet = new Set();
@@ -809,22 +875,30 @@ export class MigrationService {
     const newUsersMap = new Map(newUsers.map(user => [user.email, user.id]));
     const newSkuProductsMap = new Map(newSkuProducts.map(sku => [sku.id, sku]));
 
+
+    // const notFoundStatus = new Set();
     const willInsertOrderLogs = oldOrderLogs.map(order => {
+      // if (!ORDER_STATUS_MAP.get(order.order_status)) {
+      //   notFoundStatus.add(order.order_status)
+      // }
       return {
         user_id: newUsersMap.get(order.email) || order.user_id,
         order_id: newOrdersMap.get(order.order_id),
-        type: order.type_id,
-        message: "",
+        type: "Status update",
+        message: ORDER_STATUS_MAP.get(order.order_status) || order.order_status,
         // old_data: JSON.stringify(newSkuProductsMap.get(order.product_id) || order.product_id),
-        old_data: order.product_id,
-        // new_data: "",
-        status: order.order_status,
+        // old_data: order.product_id,
+        new_data: JSON.stringify(newSkuProductsMap.get(order.product_id) || order.product_id),
+        status: ORDER_STATUS_MAP.get(order.order_status) || order.order_status,
         product_status: order.product_status,
+        created_at: order.created_at,
+        updated_at: new Date()
       }
     })
 
 
-    // return willInsertOrderLogs;
+    // return [...notFoundStatus.values()];
+    // return willInsertOrderLogs[willInsertOrderLogs.length - 1];
 
     const part1 = willInsertOrderLogs.slice(0, 50000);
     const part2 = willInsertOrderLogs.slice(50000, 100000);
@@ -837,6 +911,79 @@ export class MigrationService {
     await this.saas('order_log').insert(part4);
     return 1;
     // return willInsertOrderLogs.length;
+  }
+
+  async migrateOrderAddressLog() {
+    const oldOrderAddressLog = await this.gng('portonics_order_address_log');
+
+    // return oldOrderAddressLog;
+    const orderNumbersSet = new Set();
+
+    oldOrderAddressLog?.forEach(log => {
+      orderNumbersSet.add(log.order_id);
+    });
+
+    const uniqueOrderNumbers = [...orderNumbersSet.values()];
+    const newOrders = await this.saas('order').whereIn('order_number', uniqueOrderNumbers);
+
+    const newOrdersMap = new Map(newOrders.map(order => [order.order_number, order.id]));
+
+    const willInsertOrderAddressLog = oldOrderAddressLog.map(order => {
+      const { order_id, customer_name, customer_phone, customer_email, address, type } = order;
+      return {
+        user_id: 0,
+        order_id: newOrdersMap.get(order.order_id),
+        message: `${order_id}, ${customer_name}, ${customer_phone}, ${customer_email}, ${address}, ${type}`,
+        new_data: JSON.stringify(order),
+        type: "Shipping address update",
+        created_at: order.change_at,
+      }
+    })
+
+    await this.saas('order_log').insert(willInsertOrderAddressLog);
+    // return 1;
+    return willInsertOrderAddressLog.length;
+  }
+
+  async migrateOrderTransaction() {
+    const oldOrderTransaction = await this.gng('portonics_order_gg_transaction');
+
+    // return oldOrderTransaction[0];
+    const orderNumbersSet = new Set();
+
+    oldOrderTransaction?.forEach(log => {
+      orderNumbersSet.add(log.order_unique_id);
+    });
+
+    const uniqueOrderNumbers = [...orderNumbersSet.values()];
+    const newOrders = await this.saas('order').whereIn('order_number', uniqueOrderNumbers);
+
+    const newOrdersMap = new Map(newOrders.map(order => [order.order_number, order]));
+
+    const GATEWAY = {
+      cards: 2,
+      cod: 3,
+      card_on_delivery: 4
+    }
+
+    const willInsertOrderTransaction = oldOrderTransaction.map(order => {
+      const targetOrder = newOrdersMap.get(order.order_unique_id);
+      return {
+        user_id: targetOrder.user_id,
+        order_id: targetOrder.id,
+        gateway_id: GATEWAY[order.payment_type],
+        transaction_id: order.transaction_id,
+        amount: order.invoice_amount,
+        response: JSON.stringify(order),
+        status: 'success',
+        created_at: order.created_at,
+        payment_id: order.transaction_id
+      }
+    })
+
+    await this.saas('payment').insert(willInsertOrderTransaction);
+    // return 1;
+    return willInsertOrderTransaction.length;
   }
 
   async migrateOrderNote() {
@@ -863,17 +1010,6 @@ export class MigrationService {
       }
     })
 
-
-    // return willInsertOrderLogs;
-
-    // const part1 = willInsertOrderLogs.slice(0, 50000);
-    // const part2 = willInsertOrderLogs.slice(50000, 100000);
-    // const part3 = willInsertOrderLogs.slice(100000, 150000);
-    // const part4 = willInsertOrderLogs.slice(150000);
-
-    // await this.saas('order_log').insert(part1);
-    // await this.saas('order_log').insert(part2);
-    // await this.saas('order_log').insert(part3);
     await this.saas('order_note').insert(willInsertOrderNotes);
     // return 1;
     return willInsertOrderNotes.length;
@@ -890,7 +1026,7 @@ export class MigrationService {
     // })
 
     // await this.gng('test').insert(willInsert);
-    return await this.gng('test1').select('*').where({value: "{\"id\":821,\"email\":\"sujan.abdullah@gmail.com\",\"phone\":null,\"first_name\":\"sujan abdullah\",\"last_name\":null}"});
+    return await this.gng('test1').select('*').where({ value: "{\"id\":821,\"email\":\"sujan.abdullah@gmail.com\",\"phone\":null,\"first_name\":\"sujan abdullah\",\"last_name\":null}" });
     // return await this.gng('test1').select('*');
   }
 
@@ -906,6 +1042,22 @@ export class MigrationService {
 
     await this.saas('portonics_parent_product').insert(filteredProducts);
     return filteredProducts;
+  }
+
+  async migrateUrlRedirection() {
+    const oldUrlRedirections = await this.gng('portonics_redirection');
+
+    const willInsert = oldUrlRedirections?.map(url => {
+      return {
+        dummy_url: url.source_url,
+        original_url: url.redirection_url,
+        createdBy: url.created_by,
+        createdAt: url.created_at,
+        updatedAt: url.updated_at,
+      }
+    });
+
+    return await this.urlRedirectionService.createManyUrls(willInsert);
   }
 
   async convertToJson() {

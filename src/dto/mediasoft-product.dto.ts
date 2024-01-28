@@ -8,7 +8,7 @@ export class MediaSoftProductDto {
 }
 
 export class MediaSoftProductStockDto {
-    barcode?: string;
+    barcode?: string | string[];
     modelName?: string;
     shopID?: string;
 }

@@ -161,7 +161,8 @@ export class AppController {
         data
       }
     } catch (error) {
-      throw new HttpException(error.message, error.status);
+      console.log(error);
+      // throw new HttpException(error.message, error.status);
     }
   }
 
@@ -169,6 +170,48 @@ export class AppController {
   async migrateOrderNotes() {
     try {
       const data = await this.migrationService.migrateOrderNote();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('migrate-order-address-log')
+  async migrateOrderAddressLog() {
+    try {
+      const data = await this.migrationService.migrateOrderAddressLog();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('migrate-order-transaction')
+  async migrateOrderTransaction() {
+    try {
+      const data = await this.migrationService.migrateOrderTransaction();
+
+      return {
+        success: true,
+        data
+      }
+    } catch (error) {
+      throw new HttpException(error.message, error.status);
+    }
+  }
+
+  @Post('migrate-url-redirection')
+  async migrateUrlRedirection() {
+    try {
+      const data = await this.migrationService.migrateUrlRedirection();
 
       return {
         success: true,
