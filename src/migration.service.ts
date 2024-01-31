@@ -678,6 +678,7 @@ export class MigrationService {
       slug: product.slug,
       thumbnail: product.imagesStr,
       long_description: this.decodeHtmlEntities(String(product.description)).replaceAll('https://gngp.sgp1.digitaloceanspaces.com/', 'https://gngmedia.s3.ap-southeast-1.amazonaws.com/'),
+      short_description: !product.short_description ? null : this.decodeHtmlEntities(String(product.short_description)).replaceAll('https://gngp.sgp1.digitaloceanspaces.com/', 'https://gngmedia.s3.ap-southeast-1.amazonaws.com/'),
       category_id: product.category_id,
       brand_id: product.brand_id,
       warranty: product.ws_title,
