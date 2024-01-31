@@ -393,6 +393,16 @@ export class MigrationService {
     const updateItemsMap = new Map();
     const notMatchedShopId = new Set();
 
+    // ignore shop id
+    const ignoreShopId = new Set([
+      "GGS029",
+      "GGS022",
+      "GGS018",
+      "GGS016",
+      "GGS014",
+      "GGS004"
+    ])
+
     skuProducts?.forEach(product => {
       const stockProducts = stockListMap.get(product.sku);
       if (stockProducts) {
@@ -400,7 +410,7 @@ export class MigrationService {
           const stockExist = existedSkuStocksMap.get(item.sku + item.shopID);
 
           if (stockExist) {
-            if (stockExist.quantity != item.balQty) {
+            if (stockExist.quantity != item.balQty && !ignoreShopId.has(item.shopID)) {
               updateItemsMap.set(stockExist.sku + stockExist.store_code, {
                 id: stockExist.stockId,
                 stock_quantity: item.balQty,
@@ -417,13 +427,16 @@ export class MigrationService {
               warehouseId = item.shopID;
             }
 
-            insertItemsMap.set(item.sku + item.shopID, {
-              sku_id: product.id,
-              warehouse_id: warehouseId,
-              sku: item.sku,
-              store_code: item.shopID,
-              stock_quantity: item.balQty,
-            })
+            if (!ignoreShopId.has(item.shopID)) {
+
+              insertItemsMap.set(item.sku + item.shopID, {
+                sku_id: product.id,
+                warehouse_id: warehouseId,
+                sku: item.sku,
+                store_code: item.shopID,
+                stock_quantity: item.balQty,
+              })
+            }
           }
         })
       }
