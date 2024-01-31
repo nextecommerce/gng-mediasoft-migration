@@ -467,7 +467,7 @@ export class MigrationService {
       await Promise.all(updated);
     }
 
-    return { updateItems: [...updateItemsMap.values()], insertItems: insertItems };
+    return { updateItems: [...updateItemsMap.values()].length, insertItems: insertItems.length };
     // return [...existedSkuStocksMap]
   }
 
